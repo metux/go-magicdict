@@ -1,0 +1,26 @@
+foo:
+    - one
+    - two
+    - three
+
+bar:
+    x: x-one
+    y: y-one
+    tree:
+        leaf: 1.2
+        leaf2:
+        list:
+            - a
+            - b
+xxx: huhu
+
+# abc: will be created by test
+
+hello: ${xxx}
+
+ref: ${bar}
+
+butter:
+    - b1
+    - [ "abc1", "abc2" ]
+    - b3

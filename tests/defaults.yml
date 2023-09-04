@@ -1,0 +1,15 @@
+foo:
+    - foo1
+    - foo2
+      - a
+      - b
+
+bar:
+    x: x-default
+    tree:
+        leaf: 1.2
+        leaf2:
+        knollo: foobar-${foo::0}
+        knollo2: foobar-${foo::0}-for-me
+
+yyy: huhu
