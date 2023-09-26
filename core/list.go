@@ -55,6 +55,7 @@ func (l List) Put(k api.Key, v api.Entry) error {
         return err
     }
 
+    // delete
     if v == nil {
         if i >= len(*l.data) {
             return api.ErrIndexOutOfRange
@@ -68,6 +69,15 @@ func (l List) Put(k api.Key, v api.Entry) error {
         }
         *l.data = dnew
         return nil
+    }
+
+    // simple update
+    if i < len(*l.data) {
+        (*l.data)[i] = v
+    } else {
+        newdata := make(api.AnyList, len(*l.data), i)
+        newdata[i] = v
+        l.data = &newdata
     }
 
     return api.ErrSubNotSupported
