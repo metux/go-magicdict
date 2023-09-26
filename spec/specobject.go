@@ -91,15 +91,15 @@ func (this SpecObject) Get(k api.Key) (api.Entry, error) {
 }
 
 func (this SpecObject) IsScalar() bool {
-    return false
+    return this.Data.IsScalar()
 }
 
 func (this SpecObject) IsConst() bool {
-    return false
+    return this.Data.IsConst()
 }
 
 func (this SpecObject) String() string {
-    return ""
+    return this.Data.String()
 }
 
 // NOTE: this needs pointer receiver
