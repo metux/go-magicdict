@@ -1,12 +1,13 @@
 package macro
 
 import (
+    "strings"
     "github.com/metux/go-magicdict/api"
     "github.com/metux/go-magicdict/core"
     "github.com/metux/go-magicdict/parser"
 )
 
-func resolveRef(ent parser.Term, root api.Entry) (api.Entry, error) {
+func resolveRef(ent parser.Term, v api.Entry, root api.Entry) (api.Entry, error) {
     str := ""
     for _, v := range ent.Expr {
         switch v.Type {
@@ -16,6 +17,11 @@ func resolveRef(ent parser.Term, root api.Entry) (api.Entry, error) {
                 return nil, api.ErrUnknownEntryType
         }
     }
+
+    if strings.HasPrefix(str, "@@") {
+        root = v
+    }
+
     return root.Get(api.Key(str))
 }
 
@@ -43,7 +49,7 @@ func ProcessVars(v api.Entry, root api.Entry) (api.Entry, error) {
             case parser.TermLiteral:
                 return v, nil
             case parser.TermRef:
-                return resolveRef(parsed[0], root)
+                return resolveRef(parsed[0], v, root)
             default:
                 return nil, api.ErrUnknownEntryType
         }
@@ -58,7 +64,7 @@ func ProcessVars(v api.Entry, root api.Entry) (api.Entry, error) {
     for _,y := range parsed {
         switch y.Type {
             case parser.TermRef:
-                if val, err := resolveRef(y, root); err == nil {
+                if val, err := resolveRef(y, v, root); err == nil {
                     retstr = retstr + val.String()
                 } else {
                     return nil, err
