@@ -8,10 +8,6 @@ type ScalarFunc struct {
     data      func() string
 }
 
-func (this ScalarFunc) Size() int {
-    return 0
-}
-
 func (this ScalarFunc) Elems() [] api.Entry {
     return []api.Entry{}
 }

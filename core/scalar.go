@@ -9,10 +9,6 @@ type Scalar struct {
     data      string
 }
 
-func (sc Scalar) Size() int {
-    return 0
-}
-
 func (sc Scalar) Elems() [] api.Entry {
     return []api.Entry{}
 }

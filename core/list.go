@@ -9,10 +9,6 @@ type List struct {
     data      * api.AnyList
 }
 
-func (l List) Size() int {
-    return len(*l.data)
-}
-
 func (l List) GetIdx(idx int) (api.Entry, error) {
     v,e,wb := encap((*l.data)[idx], l)
     if wb {
