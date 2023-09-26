@@ -47,9 +47,16 @@ func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
                 Defaults: this.Defaults,
             }
             return sp.Init(), nil
-        default:
-            return macro.ProcessVars(v, r)
+
+        case core.Scalar:
+            v = SpecScalar{
+                Root: r,
+                Path: this.Path.Append(k),
+                Data: v.String(),
+            }
     }
+
+    return macro.ProcessVars(v, r)
 }
 
 func (this SpecObject) Get(k api.Key) (api.Entry, error) {
