@@ -59,4 +59,8 @@ func RunTestOne(t * testing.T, r api.Entry) {
     // test putting a function
     c.Root.Put(api.Key("bar::testfunc"), core.NewScalarFunc(func() string { return "HELLO" }))
     c.AssertString("bar::testfunc", "HELLO")
+
+    // test lazy proxy
+    c.Root.Put(api.Key("proxytest"), core.NewSymlink(c.Root, api.Key("bar::tree"), false))
+    c.AssertListStr("proxytest::list", []string { "a", "b" })
 }
