@@ -124,15 +124,12 @@ func (this SpecObject) mergeDef() api.Entry {
 }
 
 func (this SpecObject) Elems() [] api.Entry {
-    if d := this.mergeDef(); d != nil {
-        elems := make([]api.Entry, 0)
-        for _,k := range this.Keys() {
-            e,_ := this.Get(api.Key(k))
-            elems = append(elems, e)
-        }
-        return elems
+    elems := make([]api.Entry, 0)
+    for _,k := range this.Keys() {
+        e,_ := this.Get(api.Key(k))
+        elems = append(elems, e)
     }
-    return this.Data.Elems()
+    return elems
 }
 
 func (this SpecObject) Keys() [] string {
