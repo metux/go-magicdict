@@ -7,6 +7,7 @@ bar:
     x: x-one
     y: y-one
     tree:
+        myname: ${@@KEY}
         leaf: 1.2
         leaf2:
         list:
@@ -24,3 +25,10 @@ butter:
     - b1
     - [ "abc1", "abc2" ]
     - b3
+
+zzz: ${@@KEY}xx
+
+x123:
+    one:
+        two: name-is-${@@KEY}
+        three: parent-is-${@@PARENT::@@KEY}

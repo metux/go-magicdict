@@ -10,9 +10,9 @@ func RunTestOne(t * testing.T, r api.Entry) {
 
     c := Checker { Test: t, Root: r }
 
-    c.AssertKeys("",          []string { "xxx", "foo", "bar", "yyy", "hello", "ref", "butter" })
+    c.AssertKeys("",          []string { "xxx", "foo", "bar", "yyy", "hello", "ref", "butter", "zzz", "x123" })
     c.AssertKeys("bar",       []string { "x", "y", "tree" })
-    c.AssertKeys("bar::tree", []string { "leaf", "leaf2", "list", "knollo", "knollo2" })
+    c.AssertKeys("bar::tree", []string { "leaf", "leaf2", "list", "knollo", "knollo2", "myname" })
 
     c.AssertEntry("bar::tree::leaf")
 
@@ -30,7 +30,7 @@ func RunTestOne(t * testing.T, r api.Entry) {
     c.AssertString("bar::tree::knollo",  "foobar-one")
     c.AssertString("bar::tree::knollo2",  "foobar-one-for-me")
 
-    c.AssertEntry("bar::tree")
+    c.AssertMagicName("bar::tree")
 
     c.AssertEntry("bar").AssertEntry("tree")
 
@@ -63,4 +63,12 @@ func RunTestOne(t * testing.T, r api.Entry) {
     // test lazy proxy
     c.Root.Put(api.Key("proxytest"), core.NewSymlink(c.Root, api.Key("bar::tree"), false))
     c.AssertListStr("proxytest::list", []string { "a", "b" })
+
+    // checking @@KEY magic key
+    c.AssertEntry("zzz")
+    c.AssertEntry("bar::tree::@@KEY")
+    c.AssertString("zzz", "zzzxx")
+
+    c.AssertString("x123::one::two", "name-is-two")
+    c.AssertString("x123::one::three", "parent-is-one")
 }

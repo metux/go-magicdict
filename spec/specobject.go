@@ -78,6 +78,22 @@ func (this SpecObject) Get(k api.Key) (api.Entry, error) {
         return parent.Get(tail)
     }
 
+    switch k {
+        case api.MagicAttrPath:
+            return core.NewScalarStr(string(this.Path)), nil
+
+        case api.MagicAttrKey:
+            _,p1 := this.Path.Tail()
+            return core.NewScalarStr(string(p1)), nil
+
+        case api.MagicAttrParent:
+            p1,_ := this.Path.Tail()
+            if this.Root == nil {
+                return nil, nil
+            }
+            return this.Root.Get(p1)
+    }
+
     ent, err := this.Data.Get(k)
     if err != nil {
         return nil, err

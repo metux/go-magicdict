@@ -1,6 +1,8 @@
 package tests
 
 import (
+    "runtime/debug"
+    "strconv"
     "testing"
     "github.com/metux/go-magicdict/api"
     "github.com/metux/go-magicdict/core"
@@ -37,6 +39,10 @@ func (c Checker) AssertListStr(k api.Key, want[] string) {
     for x,e := range elems {
         if e.IsScalar() && e.IsConst() {
             el2[x] = e.String()
+            n_ent, n_err := e.Get(api.MagicAttrKey)
+            if n_err != nil || n_ent.String() != strconv.Itoa(x) {
+                c.Test.Fatalf("name of list entry #%d of %s broken: \"%s\" should be %d -- %s\n%s\n", x, k, n_ent.String(), x, n_err, string(debug.Stack()))
+            }
         } else {
             c.Test.Fatalf("list entry #%d of %s is not scalar", x, k)
         }
@@ -63,6 +69,15 @@ func (c Checker) AssertString(k api.Key, want string) {
         c.Test.Fatalf("\"%s\" should be \"%s\" but is \"%s\"", k, want, str)
     }
     c.Test.Logf("asserted key %s is string value %s\n", k, want)
+}
+
+func (c Checker) AssertMagicName(k api.Key) {
+    ent := c.AssertEntry(k)
+    _,tail := k.Tail()
+    magicent,_ := ent.Root.Get(api.MagicAttrKey)
+    if magicent.String() != string(tail) {
+        c.Test.Fatalf("wrong entry magic name of %s: %s", k, magicent.String())
+    }
 }
 
 func (c Checker) FetchScalar(k api.Key) api.Entry {
