@@ -31,32 +31,25 @@ type SpecObject struct {
 // FIXME: add variable substitution
 func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
 
-    // FIXME: use entry methods
-    _, ok1 := v.(core.Dict)
-    _, ok2 := v.(core.List)
-
-    if ok1 || ok2 {
-        // FIXME: decide when to box ?
-        // const strings or those w/ string interface should not be boxed ?
-        r := this.Root
-        if r == nil {
-            r = &this
-        }
-        sp := SpecObject {
-            Root:     r,
-            Path:     this.Path.Append(k),
-            Data:     v,
-            Defaults: this.Defaults,
-        }
-        return sp.Init(), nil
-    }
-
     r := this.Root
     if r == nil {
         r = &this
     }
 
-    return macro.ProcessVars(v, r)
+    switch v.(type) {
+        case core.Dict, core.List:
+            // FIXME: decide when to box ?
+            // const strings or those w/ string interface should not be boxed ?
+            sp := SpecObject {
+                Root:     r,
+                Path:     this.Path.Append(k),
+                Data:     v,
+                Defaults: this.Defaults,
+            }
+            return sp.Init(), nil
+        default:
+            return macro.ProcessVars(v, r)
+    }
 }
 
 func (this SpecObject) Get(k api.Key) (api.Entry, error) {
