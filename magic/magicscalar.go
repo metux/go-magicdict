@@ -1,17 +1,17 @@
-package spec
+package magic
 
 import (
     "github.com/metux/go-magicdict/api"
     "github.com/metux/go-magicdict/core"
 )
 
-type SpecScalar struct {
-    Root * SpecObject
+type magicScalar struct {
+    Root * MagicDict
     Path api.Key
     Data string
 }
 
-func (this SpecScalar) Get(k api.Key) (api.Entry, error) {
+func (this magicScalar) Get(k api.Key) (api.Entry, error) {
     head, tail := k.Head()
     switch head {
         case api.MagicAttrPath:
@@ -36,35 +36,35 @@ func (this SpecScalar) Get(k api.Key) (api.Entry, error) {
     return nil, api.ErrSubNotSupported
 }
 
-func (this SpecScalar) IsScalar() bool {
+func (this magicScalar) IsScalar() bool {
     return true
 }
 
-func (this SpecScalar) IsConst() bool {
+func (this magicScalar) IsConst() bool {
     return true
 }
 
-func (this SpecScalar) String() string {
+func (this magicScalar) String() string {
     return this.Data
 }
 
-func (this SpecScalar) Elems() [] api.Entry {
+func (this magicScalar) Elems() [] api.Entry {
     return []api.Entry{}
 }
 
-func (this SpecScalar) Keys() [] string {
+func (this magicScalar) Keys() [] string {
     return []string{}
 }
 
-func (this SpecScalar) Put(k api.Key, v api.Entry) error {
+func (this magicScalar) Put(k api.Key, v api.Entry) error {
     return api.ErrSubNotSupported
 }
 
-func (this SpecScalar) Empty() bool {
+func (this magicScalar) Empty() bool {
     return true
 }
 
 // maybe we'll wanna have different modes here
-func (this SpecScalar) MayMergeDefaults() bool {
+func (this magicScalar) MayMergeDefaults() bool {
     return false
 }

@@ -1,4 +1,4 @@
-package spec
+package magic
 
 import (
     "github.com/metux/go-magicdict/api"
@@ -12,8 +12,8 @@ import (
 // others have defaults==nil
 // Splittng it up would just save one PTR per instance, but add extra
 // complexity and allocations
-type SpecObject struct {
-    Root * SpecObject
+type MagicDict struct {
+    Root * MagicDict
     Data api.Entry
 
     // this is always from the root (need to prepend Path)
@@ -22,14 +22,14 @@ type SpecObject struct {
     Path api.Key
 }
 
-// Box an entry into SpecObject wrapper, so that defaults still work
+// Box an entry into MagicDict wrapper, so that defaults still work
 // trivial scalars and nil aren't boxed
 //
 // FIXME: right now just boxing Dict and List
 // we'll later box everything that's not inside a Boxed
 //
 // FIXME: add variable substitution
-func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
+func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 
     r := this.Root
     if r == nil {
@@ -40,7 +40,7 @@ func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
         case core.Dict, core.List:
             // FIXME: decide when to box ?
             // const strings or those w/ string interface should not be boxed ?
-            sp := SpecObject {
+            sp := MagicDict {
                 Root:     r,
                 Path:     this.Path.Append(k),
                 Data:     v,
@@ -49,7 +49,7 @@ func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
             return sp.Init(), nil
 
         case core.Scalar:
-            v = SpecScalar{
+            v = magicScalar{
                 Root: r,
                 Path: this.Path.Append(k),
                 Data: v.String(),
@@ -59,7 +59,7 @@ func (this SpecObject) box(k api.Key, v api.Entry) (api.Entry, error) {
     return macro.ProcessVars(v, r)
 }
 
-func (this SpecObject) Get(k api.Key) (api.Entry, error) {
+func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 
     if k.Empty() {
         return this, nil
@@ -113,20 +113,20 @@ func (this SpecObject) Get(k api.Key) (api.Entry, error) {
     return nil, nil
 }
 
-func (this SpecObject) IsScalar() bool {
+func (this MagicDict) IsScalar() bool {
     return this.Data.IsScalar()
 }
 
-func (this SpecObject) IsConst() bool {
+func (this MagicDict) IsConst() bool {
     return this.Data.IsConst()
 }
 
-func (this SpecObject) String() string {
+func (this MagicDict) String() string {
     return this.Data.String()
 }
 
 // NOTE: this needs pointer receiver
-func (this * SpecObject) SetDefaultEntry(k api.Key, val api.Entry) error {
+func (this * MagicDict) SetDefaultEntry(k api.Key, val api.Entry) error {
     // FIXME: maybe nil should mean clear all ?
     if val == nil {
         return api.ErrNilInterface
@@ -137,7 +137,7 @@ func (this * SpecObject) SetDefaultEntry(k api.Key, val api.Entry) error {
 // FIXME: add AddDefaults() from list of key+value
 
 // this prevents unwanted merging (eg. on lists)
-func (this SpecObject) mergeDef() api.Entry {
+func (this MagicDict) mergeDef() api.Entry {
     if this.MayMergeDefaults() {
         if d,_ := this.Defaults.Get(this.Path); d != nil && !d.Empty() {
             return d
@@ -146,7 +146,7 @@ func (this SpecObject) mergeDef() api.Entry {
     return nil
 }
 
-func (this SpecObject) Elems() [] api.Entry {
+func (this MagicDict) Elems() [] api.Entry {
     elems := make([]api.Entry, 0)
     for _,k := range this.Keys() {
         e,_ := this.Get(api.Key(k))
@@ -155,27 +155,27 @@ func (this SpecObject) Elems() [] api.Entry {
     return elems
 }
 
-func (this SpecObject) Keys() [] string {
+func (this MagicDict) Keys() [] string {
     if d := this.mergeDef(); d != nil {
         return utils.UnionSlice(this.Data.Keys(), d.Keys())
     }
     return this.Data.Keys()
 }
 
-func (this SpecObject) Put(k api.Key, v api.Entry) error {
+func (this MagicDict) Put(k api.Key, v api.Entry) error {
     return this.Data.Put(k, v)
 }
 
-func (this SpecObject) Empty() bool {
+func (this MagicDict) Empty() bool {
     return this.Data.Empty() && this.Defaults.Empty()
 }
 
 // maybe we'll wanna have different modes here
-func (this SpecObject) MayMergeDefaults() bool {
+func (this MagicDict) MayMergeDefaults() bool {
     return this.Data.MayMergeDefaults()
 }
 
-func (this * SpecObject) Init() * SpecObject {
+func (this * MagicDict) Init() * MagicDict {
     if this.Data == nil {
         this.Data = core.NewDict(nil)
     }
@@ -185,7 +185,7 @@ func (this * SpecObject) Init() * SpecObject {
     return this
 }
 
-func (this * SpecObject) InitData(data api.Entry, defaults api.Entry) * SpecObject {
+func (this * MagicDict) InitData(data api.Entry, defaults api.Entry) * MagicDict {
     this.Data = data
     this.Defaults = defaults
     return this.Init()
@@ -194,12 +194,12 @@ func (this * SpecObject) InitData(data api.Entry, defaults api.Entry) * SpecObje
 //
 // only create it via constructor, since some fields *MUST* be initialized
 //
-func NewSpecFromDict(d api.Entry, dflt api.Entry) * SpecObject {
+func NewMagicFromDict(d api.Entry, dflt api.Entry) * MagicDict {
     if dflt == nil {
         dflt = core.NewDict(nil)
     }
 
-    sp := SpecObject {
+    sp := MagicDict {
         Data: d,
         Defaults: dflt,
     }

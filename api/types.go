@@ -8,13 +8,13 @@ type AnyMap = map[string] Any
 // parsed node itself and have very special meanings. they can be used
 // to eg. construct relative references.
 //
-// NOTE: currently only implemented SpecObject's (and their boxed values)
+// NOTE: currently only implemented MagicDict's (and their boxed values)
 // core types like Dict or List ignore them (they don't record the data at all)
 const (
     // name of the node's key within its parent (string)
     MagicAttrKey    = Key("@@KEY")
     // reference to the node's parent entry itself (entry)
     MagicAttrParent = Key("@@PARENT")
-    // name of the node's full path inside spec object (string)
+    // name of the node's full path inside MagicDict object (string)
     MagicAttrPath   = Key("@@PATH")
 )

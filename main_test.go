@@ -5,16 +5,16 @@ import (
     "github.com/metux/go-magicdict/core"
     "github.com/metux/go-magicdict/api"
     "github.com/metux/go-magicdict/tests"
-    "github.com/metux/go-magicdict/spec"
+    "github.com/metux/go-magicdict/magic"
 )
 
 type MySpec struct {
-    spec.SpecObject
+    magic.MagicDict
 }
 
 func NewMySpec(root api.Entry, dflt api.Entry) api.Entry {
     m := MySpec{
-        spec.SpecObject {
+        magic.MagicDict {
             Data: root,
             Defaults: dflt,
         },
@@ -34,7 +34,7 @@ func loadOne(t * testing.T) api.Entry {
         t.Fatalf("failed loading yaml: %s", err)
     }
 
-    return spec.NewSpecFromDict(root, dflt)
+    return magic.NewMagicFromDict(root, dflt)
 }
 
 func loadDefaults(t * testing.T) api.Entry {

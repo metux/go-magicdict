@@ -3,4 +3,4 @@ TODO
 
 * implement functions
 * policy on adding objects ? unbox proxies ?
-* testcase: derive from SpecObject
+* testcase: derive from MagicDict
