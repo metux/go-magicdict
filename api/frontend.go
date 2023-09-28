@@ -81,3 +81,24 @@ func GetElems(r Entry, k Key) []Entry {
     }
     return []Entry{}
 }
+
+func SetStr(r Entry, k Key, val string) error {
+    if r == nil {
+        return ErrNilInterface
+    }
+    return r.Put(k, Scalar{Data: val})
+}
+
+func SetInt(r Entry, k Key, val int) error {
+    if r == nil {
+        return ErrNilInterface
+    }
+    return r.Put(k, Scalar{Data: strconv.Itoa(val)})
+}
+
+func SetBool(r Entry, k Key, val bool) error {
+    if r == nil {
+        return ErrNilInterface
+    }
+    return r.Put(k, Scalar{Data: strconv.FormatBool(val)})
+}
