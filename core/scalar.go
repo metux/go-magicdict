@@ -61,3 +61,10 @@ func NewScalarInt(val int) api.Entry {
 func NewScalarFloat(val float64) api.Entry {
     return NewScalarStr(strconv.FormatFloat(val, 'g', 5, 64))
 }
+
+// Create a new (free standing) `Scalar` entry object with given boolean value,
+// returned as `api.Entry` interface
+// Internally, converted to string representation
+func NewScalarBool(val bool) api.Entry {
+    return NewScalarStr(strconv.FormatBool(val))
+}

@@ -51,7 +51,7 @@ func GetStrList(r Entry, k Key) []string {
 func GetBool(r Entry, k Key, dflt bool) bool {
     switch strings.ToLower(GetStr(r, k)) {
         case "1", "y", "yes", "true",  "on":  return true
-        case "0", "n", "no",  "false", "off": return false 
+        case "0", "n", "no",  "false", "off": return false
         default:                              return dflt
     }
 }

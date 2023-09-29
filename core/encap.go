@@ -19,6 +19,8 @@ func encap(v api.Any, parent api.Entry) (api.Entry, error, bool) {
             return NewScalarFloat(val), nil, false
         case string:
             return NewScalarStr(val), nil, false
+        case bool:
+            return NewScalarBool(val), nil, false
 
         // entry types
         case api.Entry:
