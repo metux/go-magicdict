@@ -1,6 +1,7 @@
 package core
 
 import (
+    "strings"
     "github.com/metux/go-magicdict/api"
     "gopkg.in/yaml.v3"
 )
@@ -88,15 +89,27 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
     d.initMap()
 
     head, tail := k.Head()
+    nlist := false
+    if strings.HasSuffix(string(head), "[]") {
+        nlist = true
+        head = head[:len(head)-2]
+    }
 
     if !tail.Empty() {
         cur := (*d.data)[string(head)]
 
         switch curVal := cur.(type) {
             case nil:
-                e := make(api.AnyMap)
-                (*d.data)[string(head)] = e
-                return NewDict(&e).Put(tail, v)
+                if nlist {
+                    e := NewList(make(api.AnyList,0))
+                    (*d.data)[string(head)] = e
+                    return e.Put(tail, v)
+                } else {
+                    m := make(api.AnyMap)
+                    e := NewDict(&m)
+                    (*d.data)[string(head)] = e
+                    return e.Put(tail, v)
+                }
             case api.AnyMap:
                 return NewDict(&curVal).Put(tail, v)
             case api.AnyList:
