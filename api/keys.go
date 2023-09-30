@@ -44,6 +44,10 @@ func (k Key) Append(suffix Key) Key {
     return Key(string(k) + "::" + string(suffix))
 }
 
+func (k Key) IsAppend() bool {
+    return k == "[]"
+}
+
 func (k Key) AppendIdx(idx int) Key {
     return k.Append(Key(strconv.Itoa(idx)))
 }

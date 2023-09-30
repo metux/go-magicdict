@@ -100,7 +100,9 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
             case api.AnyMap:
                 return NewDict(&curVal).Put(tail, v)
             case api.AnyList:
-                return NewList(curVal).Put(tail, v)
+                l := NewList(curVal)
+                (*d.data)[string(head)] = l
+                return l.Put(tail, v)
             case string, int, float64:
                 return api.ErrSubNotSupported
             case api.Entry:

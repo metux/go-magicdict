@@ -46,6 +46,12 @@ func (l List) Get(k api.Key) (api.Entry, error) {
 }
 
 func (l List) Put(k api.Key, v api.Entry) error {
+    // append
+    if k.IsAppend() {
+        *(l.data) = append(*(l.data), v)
+        return nil
+    }
+
     i,err := strconv.Atoi(string(k))
     if err != nil {
         return err
