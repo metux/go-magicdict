@@ -89,6 +89,16 @@ func SetStr(r Entry, k Key, val string) error {
     return r.Put(k, Scalar{Data: val})
 }
 
+//
+// Append string value to a list entry.
+// Automatically creates the list entry if not existing yet
+func AppendStr(r Entry, k Key, val string) error {
+    if r == nil {
+        return ErrNilInterface
+    }
+    return r.Put(Key(string(k)+"[]::[]"), Scalar{Data: val})
+}
+
 func SetInt(r Entry, k Key, val int) error {
     if r == nil {
         return ErrNilInterface
