@@ -7,3 +7,4 @@ TODO
 
 * Tests needed for:
     * api.Delete()
+    * api.MakeList()

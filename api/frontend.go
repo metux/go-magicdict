@@ -112,3 +112,19 @@ func Delete(root Entry, k Key) error {
     }
     return root.Put(k, nil)
 }
+
+// Create an [github.com/metux/go-magicdict/core.List] entry inside given root
+// entry with given key and return it. If already existing, just return it.
+// If already exists as different type, the behavior is unspecified
+//
+// nil-checks the root entry
+func MakeList(root Entry, k Key) (Entry, error) {
+    if root == nil {
+        return nil, ErrNilInterface
+    }
+    k2 := Key(string(k)+"[]::[]")
+    if err := root.Put(k2, nil); err != nil {
+        return nil, err
+    }
+    return root.Get(k)
+}
