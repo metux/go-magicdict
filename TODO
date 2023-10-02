@@ -1,6 +1,9 @@
 TODO
-----
+====
 
 * implement functions
 * policy on adding objects ? unbox proxies ?
 * testcase: derive from MagicDict
+
+* Tests needed for:
+    * api.Delete()

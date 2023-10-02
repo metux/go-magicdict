@@ -102,3 +102,13 @@ func SetBool(r Entry, k Key, val bool) error {
     }
     return r.Put(k, Scalar{Data: strconv.FormatBool(val)})
 }
+
+// Delete an entry with given key within given root entry, by putting nil value
+//
+// nil-check's the root entry
+func Delete(root Entry, k Key) error {
+    if root == nil {
+        return ErrNilInterface
+    }
+    return root.Put(k, nil)
+}
