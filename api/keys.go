@@ -59,16 +59,22 @@ func (k Key) AddPrefix(prefix string) Key {
 
 // Create a new key path by appending key and suffix
 // Like: <key> + "::" + <suffix>
-func (k Key) Append(suffix Key) Key {
+func (k Key) AppendStr(suffix string) Key {
     if k.Empty() {
         return Key(suffix)
     }
 
-    if suffix.Empty() {
+    if suffix == "" {
         return k
     }
 
-    return Key(string(k) + "::" + string(suffix))
+    return Key(string(k) + "::" + suffix)
+}
+
+// Create a new key path by appending key and suffix
+// Like: <key> + "::" + <suffix>
+func (k Key) Append(suffix Key) Key {
+    return k.AppendStr(string(suffix))
 }
 
 // Check whether it's the special append key
@@ -78,5 +84,5 @@ func (k Key) IsAppend() bool {
 
 // Similar to Append(), but using an it. Used for List element addressing
 func (k Key) AppendIdx(idx int) Key {
-    return k.Append(Key(strconv.Itoa(idx)))
+    return k.AppendStr(strconv.Itoa(idx))
 }

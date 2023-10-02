@@ -36,6 +36,6 @@ func assertKeys(t * testing.T, k1 Key, k2 Key) {
 }
 
 func TestKeyAppend(t * testing.T) {
-    assertKeys(t, Key("").Append("wurst"), Key("wurst"))
-    assertKeys(t, Key("foo").Append("bar"), Key("foo::bar"))
+    assertKeys(t, Key("").AppendStr("wurst"), Key("wurst"))
+    assertKeys(t, Key("foo").AppendStr("bar"), Key("foo::bar"))
 }
