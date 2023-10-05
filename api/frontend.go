@@ -138,3 +138,14 @@ func MakeList(root Entry, k Key) (Entry, error) {
     }
     return root.Get(k)
 }
+
+func MakeDict(root Entry, k Key) (Entry, error) {
+    if root == nil {
+        return nil, ErrNilInterface
+    }
+    if err := root.Put(k.Append("@@@"), nil); err != nil {
+        return nil, err
+    }
+    return root.Get(k)
+}
+
