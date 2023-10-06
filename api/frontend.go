@@ -49,6 +49,19 @@ func GetStrList(r Entry, k Key) []string {
 	return s
 }
 
+// fetch entry from dict by key and return it's subkeys and values as map
+func GetStrMap(r Entry, k Key) map[string]string {
+	m := make(map[string]string)
+	if ent := GetEntry(r, k); ent != nil {
+		for _, idx := range ent.Keys() {
+			if sub, _ := ent.Get(idx); ent != nil {
+				m[string(idx)] = sub.String()
+			}
+		}
+	}
+	return m
+}
+
 func GetBool(r Entry, k Key, dflt bool) bool {
 	switch strings.ToLower(GetStr(r, k)) {
 	case "1", "y", "yes", "true", "on":
