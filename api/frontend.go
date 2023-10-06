@@ -5,16 +5,21 @@ import (
 	"strings"
 )
 
+// get a single entry from dict and key
+func GetEntry(r Entry, k Key) Entry {
+	if r != nil {
+		ent, _ := r.Get(k)
+		return ent
+	}
+	return nil
+}
+
 // get a single string value from dict and key
 func GetStr(r Entry, k Key) string {
-	if r == nil {
-		return ""
+	if ent := GetEntry(r, k); ent != nil {
+		return ent.String()
 	}
-	if e, err := r.Get(k); e == nil || err != nil {
-		return ""
-	} else {
-		return e.String()
-	}
+	return ""
 }
 
 // append the string value(s) of entry to given slice
@@ -38,14 +43,10 @@ func StrListAppendEntry(s []string, e Entry) []string {
 // (also done recursively)
 func GetStrList(r Entry, k Key) []string {
 	s := []string{}
-	if r == nil {
-		return s
+	if ent := GetEntry(r, k); ent != nil {
+		return StrListAppendEntry(s, ent)
 	}
-	v, err := r.Get(k)
-	if v == nil || err != nil {
-		return s
-	}
-	return StrListAppendEntry(s, v)
+	return s
 }
 
 func GetBool(r Entry, k Key, dflt bool) bool {
@@ -68,19 +69,15 @@ func GetInt(r Entry, k Key, dflt int) int {
 }
 
 func GetKeys(r Entry, k Key) []Key {
-	if r != nil {
-		if ent, err := r.Get(k); err == nil || ent != nil {
-			return ent.Keys()
-		}
+	if ent := GetEntry(r, k); ent != nil {
+		return ent.Keys()
 	}
 	return []Key{}
 }
 
 func GetElems(r Entry, k Key) []Entry {
-	if r != nil {
-		if ent, err := r.Get(k); err == nil || ent != nil {
-			return ent.Elems()
-		}
+	if ent := GetEntry(r, k); ent != nil {
+		return ent.Elems()
 	}
 	return []Entry{}
 }
