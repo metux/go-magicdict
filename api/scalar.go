@@ -1,46 +1,46 @@
 package api
 
 type Scalar struct {
-    Data      string
+	Data string
 }
 
-func (sc Scalar) Elems() [] Entry {
-    return []Entry{}
+func (sc Scalar) Elems() []Entry {
+	return []Entry{}
 }
 
-func (sc Scalar) Keys() [] Key {
-    return []Key{}
+func (sc Scalar) Keys() []Key {
+	return []Key{}
 }
 
 // FIXME: correct semantics ?
 func (sc Scalar) Get(k Key) (Entry, error) {
-    if k.Empty() {
-        return sc, nil
-    }
+	if k.Empty() {
+		return sc, nil
+	}
 
-    return nil, ErrSubNotSupported
+	return nil, ErrSubNotSupported
 }
 
 func (sc Scalar) String() string {
-    return sc.Data
+	return sc.Data
 }
 
 func (sc Scalar) IsConst() bool {
-    return true
+	return true
 }
 
 func (sc Scalar) Put(k Key, v Entry) error {
-    return ErrSubNotSupported
+	return ErrSubNotSupported
 }
 
 func (sc Scalar) MayMergeDefaults() bool {
-    return false
+	return false
 }
 
 func (sc Scalar) Empty() bool {
-    return len(sc.Data) == 0
+	return len(sc.Data) == 0
 }
 
 func (sc Scalar) IsScalar() bool {
-    return true
+	return true
 }
