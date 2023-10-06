@@ -55,13 +55,13 @@ func (d Dict) Get(k api.Key) (api.Entry, error) {
 }
 
 // Return the direct sub-keys as string slice
-func (d Dict) Keys() []string {
+func (d Dict) Keys() []api.Key {
     d.initMap()
 
     idx := 0
-    keys := make([]string, len(*d.data))
+    keys := make([]api.Key, len(*d.data))
     for key := range *d.data {
-        keys[idx] = key
+        keys[idx] = api.Key(key)
         idx++
     }
     return keys

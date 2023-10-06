@@ -52,8 +52,8 @@ func (this magicScalar) Elems() [] api.Entry {
     return []api.Entry{}
 }
 
-func (this magicScalar) Keys() [] string {
-    return []string{}
+func (this magicScalar) Keys() [] api.Key {
+    return []api.Key{}
 }
 
 func (this magicScalar) Put(k api.Key, v api.Entry) error {

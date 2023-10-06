@@ -25,10 +25,10 @@ func (l List) Elems() []api.Entry {
     return data
 }
 
-func (l List) Keys() []string {
-    data := make([]string, len(*l.data))
+func (l List) Keys() []api.Key {
+    data := make([]api.Key, len(*l.data))
     for x := 0; x < len(*l.data); x++ {
-        data[x] = strconv.Itoa(x)
+        data[x] = api.Key(strconv.Itoa(x))
     }
     return data
 }

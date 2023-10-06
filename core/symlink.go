@@ -39,12 +39,12 @@ func (this Symlink) Elems() [] api.Entry {
     }
 }
 
-func (this Symlink) Keys() [] string {
+func (this Symlink) Keys() [] api.Key {
     if orig, err := this.fetch(); err == nil {
         return orig.Keys()
     } else {
         log.Printf("symlink fetch error: %v", err)
-        return []string{}
+        return []api.Key{}
     }
 }
 

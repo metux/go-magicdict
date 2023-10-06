@@ -18,7 +18,7 @@ func (c Checker) AssertKeys(k api.Key, want[] string) {
     if len(keys) != len(want) {
         c.Test.Fatalf("keys size mismatch: %d should be %d (\"%s\" vs \"%s\")", len(keys), len(want), keys, want)
     }
-    checkStrs(c.Test, keys, want)
+    checkKeys(c.Test, keys, want)
 }
 
 // note that this only works if the upper layer doesn't have this entry

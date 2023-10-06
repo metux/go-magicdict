@@ -12,8 +12,8 @@ func (this ScalarFunc) Elems() [] api.Entry {
     return []api.Entry{}
 }
 
-func (this ScalarFunc) Keys() [] string {
-    return []string{}
+func (this ScalarFunc) Keys() [] api.Key {
+    return []api.Key{}
 }
 
 // FIXME: correct semantics ?

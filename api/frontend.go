@@ -64,13 +64,13 @@ func GetInt(r Entry, k Key, dflt int) int {
     }
 }
 
-func GetKeys(r Entry, k Key) []string {
+func GetKeys(r Entry, k Key) []Key {
     if r != nil {
         if ent,err := r.Get(k); err == nil || ent != nil {
             return ent.Keys()
         }
     }
-    return []string{}
+    return []Key{}
 }
 
 func GetElems(r Entry, k Key) []Entry {

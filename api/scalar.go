@@ -8,8 +8,8 @@ func (sc Scalar) Elems() [] Entry {
     return []Entry{}
 }
 
-func (sc Scalar) Keys() [] string {
-    return []string{}
+func (sc Scalar) Keys() [] Key {
+    return []Key{}
 }
 
 // FIXME: correct semantics ?

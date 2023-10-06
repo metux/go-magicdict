@@ -149,13 +149,13 @@ func (this MagicDict) mergeDef() api.Entry {
 func (this MagicDict) Elems() [] api.Entry {
     elems := make([]api.Entry, 0)
     for _,k := range this.Keys() {
-        e,_ := this.Get(api.Key(k))
+        e,_ := this.Get(k)
         elems = append(elems, e)
     }
     return elems
 }
 
-func (this MagicDict) Keys() [] string {
+func (this MagicDict) Keys() [] api.Key {
     if d := this.mergeDef(); d != nil {
         return utils.UnionSlice(this.Data.Keys(), d.Keys())
     }

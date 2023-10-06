@@ -8,7 +8,7 @@ type Entry interface {
     Put(k Key, value Entry) error
 
     // get a list of direct subkeys
-    Keys() []string
+    Keys() []Key
 
     // get a list of values
     Elems() []Entry
