@@ -4,17 +4,14 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v3"
-
-	"github.com/metux/go-magicdict/api"
 )
 
 func YamlParse(text []byte) (*Dict, error) {
-	m := new(api.AnyMap)
-	err := yaml.Unmarshal(text, &m)
+	d := EmptyDict()
+	err := yaml.Unmarshal(text, &d)
 	if err != nil {
 		return nil, err
 	}
-	d := NewDict(m)
 	return &d, nil
 }
 

@@ -1,7 +1,10 @@
 package core
 
 import (
+	"fmt"
 	"strconv"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/metux/go-magicdict/api"
 )
@@ -117,6 +120,37 @@ func (l List) IsConst() bool {
 
 func (l *List) append(val api.Any) {
 	*l.data = append(*l.data, val)
+}
+
+func (l *List) UnmarshalYAML(node *yaml.Node) error {
+	l.data = new(api.AnyList)
+
+	if node.Kind != yaml.SequenceNode {
+		return fmt.Errorf("list: not a sequence node: tag=%s val=%s at %d:%d", node.Tag, node.Value, node.Line, node.Column)
+	}
+
+	for _, sub := range node.Content {
+		switch sub.Kind {
+		case yaml.SequenceNode:
+			sublist := EmptyList()
+			if err := sublist.UnmarshalYAML(sub); err != nil {
+				return err
+			}
+			l.append(sublist)
+		case yaml.MappingNode:
+			subdict := EmptyDict()
+			if err := subdict.UnmarshalYAML(sub); err != nil {
+				return err
+			}
+			l.append(subdict)
+		case yaml.ScalarNode:
+			l.append(NewScalarStr(sub.Value))
+		default:
+			return fmt.Errorf("list: unhandled tag: tag=%s val=%s at %d:%d", sub.Tag, sub.Value, sub.Line, sub.Column)
+		}
+	}
+
+	return nil
 }
 
 func EmptyList() List {

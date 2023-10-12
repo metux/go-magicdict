@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -197,6 +198,52 @@ func (d Dict) append(k string, val api.Any) {
 
 func (d Dict) appendK(k api.Key, val api.Any) {
 	d.append(string(k), val)
+}
+
+func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
+	d.initMap()
+
+	if node.Kind != yaml.MappingNode {
+		return fmt.Errorf("dict: not a mapping node: tag=%s val=%s at %d:%d", node.Tag, node.Value, node.Line, node.Column)
+	}
+
+	idx := 0
+	for idx < len(node.Content) {
+		sub := node.Content[idx]
+
+		if sub.Tag != "!!str" {
+			return fmt.Errorf("dict: unhandled tag: tag=%s val=%s at %d:%d", sub.Tag, sub.Value, sub.Line, sub.Column)
+		}
+		name := sub.Value
+
+		idx++
+		if idx == len(node.Content) {
+			return fmt.Errorf("dict: unexpected end")
+		}
+
+		switch sub2 := node.Content[idx]; sub2.Kind {
+		case yaml.SequenceNode:
+			sublist := EmptyList()
+			sublist.UnmarshalYAML(sub2)
+			d.append(name, sublist)
+		case yaml.MappingNode:
+			subdict := EmptyDict()
+			subdict.UnmarshalYAML(sub2)
+			d.append(name, subdict)
+		case yaml.ScalarNode:
+			if sub2.Tag == "!!null" {
+				d.append(name, nil)
+			} else {
+				d.append(name, NewScalarStr(sub2.Value))
+			}
+		default:
+			return fmt.Errorf("dict: unhandled tag: tag=%s val=%s at %d:%d", sub2.Tag, sub2.Value, sub2.Line, sub2.Column)
+		}
+
+		idx++
+	}
+
+	return nil
 }
 
 func EmptyDict() Dict {
