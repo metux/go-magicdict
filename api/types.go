@@ -19,4 +19,6 @@ const (
 	MagicAttrPath = Key("@@PATH")
 	// magic key for appending a list element
 	MagicAttrAppend = Key("[]")
+	// magic key prefix for accessing defaults
+	MagicAttrDefaults = Key("@@DEFAULTS")
 )

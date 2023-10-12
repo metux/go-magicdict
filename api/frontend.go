@@ -85,11 +85,15 @@ func GetElems(r Entry, k Key) EntryList {
 	return EntryList{}
 }
 
-func SetStr(r Entry, k Key, val string) error {
+func SetEntry(r Entry, k Key, val Entry) error {
 	if r == nil {
 		return ErrNilInterface
 	}
-	return r.Put(k, Scalar{Data: val})
+	return r.Put(k, val)
+}
+
+func SetStr(r Entry, k Key, val string) error {
+	return SetEntry(r, k, Scalar{Data: val})
 }
 
 // Append string value to a list entry.
@@ -104,6 +108,22 @@ func SetInt(r Entry, k Key, val int) error {
 
 func SetBool(r Entry, k Key, val bool) error {
 	return SetStr(r, k, strconv.FormatBool(val))
+}
+
+func SetDefaultEntry(r Entry, k Key, val Entry) error {
+	return SetEntry(r, k.MagicDefaults(), val)
+}
+
+func SetDefaultStr(r Entry, k Key, val string) error {
+	return SetStr(r, k.MagicDefaults(), val)
+}
+
+func SetDefaultBool(r Entry, k Key, val bool) error {
+	return SetBool(r, k.MagicDefaults(), val)
+}
+
+func SetDefaultInt(r Entry, k Key, val int) error {
+	return SetInt(r, k.MagicDefaults(), val)
 }
 
 // Delete an entry with given key within given root entry, by putting nil value

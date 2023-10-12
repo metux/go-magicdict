@@ -86,3 +86,7 @@ func (k Key) IsAppend() bool {
 func (k Key) AppendIdx(idx int) Key {
 	return k.AppendStr(strconv.Itoa(idx))
 }
+
+func (k Key) MagicDefaults() Key {
+	return MagicAttrDefaults.Append(k)
+}

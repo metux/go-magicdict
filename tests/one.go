@@ -72,4 +72,8 @@ func RunTestOne(t *testing.T, r api.Entry) {
 
 	c.AssertString("x123::one::two", "name-is-two")
 	c.AssertString("x123::one::three", "parent-is-one")
+
+	// checking defaults set
+	api.SetDefaultStr(c.Root, api.Key("bar::tree::leaf23"), "17")
+	c.AssertString("bar::tree::leaf23", "17")
 }
