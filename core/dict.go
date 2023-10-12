@@ -9,12 +9,12 @@ import (
 	"github.com/metux/go-magicdict/api"
 )
 
-// Simple Dictionary, based on [github.com/metux/go-magicdict/api.AnyMap],
+// Simple Dictionary, based on map of [github.com/metux/go-magicdict/api.Entry],
 // implementing the [github.com/metux/go-magicdict/api.Entry] interface
 type Dict struct {
 	// keeping as reference instead of internal, so we can easily copy
 	// this struct whithout throwing ourselves into a parallel universe ;-)
-	data *api.AnyMap
+	data *api.EntryMap
 }
 
 func (d Dict) Serialize() (string, error) {
@@ -27,7 +27,7 @@ func (d Dict) Serialize() (string, error) {
 
 func (d Dict) initMap() {
 	if *(d.data) == nil {
-		*(d.data) = make(api.AnyMap)
+		*(d.data) = make(api.EntryMap)
 	}
 }
 
@@ -43,14 +43,7 @@ func (d Dict) Get(k api.Key) (api.Entry, error) {
 
 	head, tail := k.Head()
 
-	sub, err, writeback := encap((*d.data)[string(head)], d)
-	if err != nil {
-		return sub, nil
-	}
-
-	if writeback && sub != nil {
-		(*d.data)[string(head)] = sub
-	}
+	sub := (*d.data)[string(head)]
 
 	if tail.Empty() || sub == nil {
 		return sub, nil
@@ -78,13 +71,8 @@ func (d Dict) Elems() api.EntryList {
 
 	idx := 0
 	vals := make(api.EntryList, len(*d.data))
-	for key, val := range *d.data {
-		// FIXME: handle error ?
-		v, _, wb := encap(val, d)
-		if wb {
-			d.append(key, v)
-		}
-		vals[idx] = v
+	for _, val := range *d.data {
+		vals[idx] = val
 		idx++
 	}
 	return vals
@@ -118,9 +106,7 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 
 	if !tail.Empty() {
 		cur := (*d.data)[string(head)]
-
-		switch curVal := cur.(type) {
-		case nil:
+		if cur == nil {
 			if nlist {
 				e := EmptyList()
 				d.appendK(head, e)
@@ -130,19 +116,8 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 				d.appendK(head, e)
 				return e.Put(tail, v)
 			}
-		case api.AnyMap:
-			return NewDict(&curVal).Put(tail, v)
-		case api.AnyList:
-			l := NewList(curVal)
-			d.appendK(head, l)
-			return l.Put(tail, v)
-		case string, int, float64:
-			return api.ErrSubNotSupported
-		case api.Entry:
-			return curVal.Put(tail, v)
-		default:
-			return api.ErrUnknownEntryType
 		}
+		return cur.Put(tail, v)
 	}
 
 	// explicit delete
@@ -165,17 +140,6 @@ func (d Dict) String() string {
 	return ""
 }
 
-// Create a new dict from existing [github.com/metux/go-magicdict/api.AnyMap].
-// Using a *pointer* to the AnyMap, instead of copy, thus any changes in the
-// dict will be reflected in the passed AnyMap.
-func NewDict(val *api.AnyMap) Dict {
-	if val == nil {
-		m := make(api.AnyMap)
-		val = &m
-	}
-	return Dict{data: val}
-}
-
 // Tell [github.com/metux/go-magicdict/magic.MagicDict] that it's allowed to
 // merge our keys with those of the lower default dict layer
 func (d Dict) MayMergeDefaults() bool {
@@ -192,11 +156,11 @@ func (d Dict) IsConst() bool {
 	return false
 }
 
-func (d Dict) append(k string, val api.Any) {
+func (d Dict) append(k string, val api.Entry) {
 	(*d.data)[k] = val
 }
 
-func (d Dict) appendK(k api.Key, val api.Any) {
+func (d Dict) appendK(k api.Key, val api.Entry) {
 	d.append(string(k), val)
 }
 
@@ -247,6 +211,6 @@ func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func EmptyDict() Dict {
-	m := make(api.AnyMap)
+	m := make(api.EntryMap)
 	return Dict{data: &m}
 }

@@ -12,15 +12,14 @@ import (
 type List struct {
 	// keeping as reference instead of internal, so we can easily copy
 	// this struct whithout throwing ourselves into a parallel universe ;-)
-	data *api.AnyList
+	data *api.EntryList
 }
 
 func (l List) GetIdx(idx int) (api.Entry, error) {
-	v, e, wb := encap((*l.data)[idx], l)
-	if wb {
-		(*l.data)[idx] = v
+	if idx < len(*l.data) {
+		return (*l.data)[idx], nil
 	}
-	return v, e
+	return nil, nil
 }
 
 func (l List) Elems() api.EntryList {
@@ -69,7 +68,7 @@ func (l List) Put(k api.Key, v api.Entry) error {
 			return api.ErrIndexOutOfRange
 		}
 
-		dnew := make(api.AnyList, 0, len(*l.data)-1)
+		dnew := make(api.EntryList, 0, len(*l.data)-1)
 		for x, y := range *l.data {
 			if x != i {
 				dnew = append(dnew, y)
@@ -83,7 +82,7 @@ func (l List) Put(k api.Key, v api.Entry) error {
 	if i < len(*l.data) {
 		(*l.data)[i] = v
 	} else {
-		newdata := make(api.AnyList, len(*l.data), i)
+		newdata := make(api.EntryList, len(*l.data), i)
 		for idx, v := range *l.data {
 			newdata[idx] = v
 		}
@@ -102,10 +101,6 @@ func (l List) String() string {
 	return ""
 }
 
-func NewList(val api.AnyList) List {
-	return List{data: &val}
-}
-
 func (l List) MayMergeDefaults() bool {
 	return false
 }
@@ -118,12 +113,12 @@ func (l List) IsConst() bool {
 	return false
 }
 
-func (l *List) append(val api.Any) {
+func (l *List) append(val api.Entry) {
 	*l.data = append(*l.data, val)
 }
 
 func (l *List) UnmarshalYAML(node *yaml.Node) error {
-	l.data = new(api.AnyList)
+	l.data = new(api.EntryList)
 
 	if node.Kind != yaml.SequenceNode {
 		return fmt.Errorf("list: not a sequence node: tag=%s val=%s at %d:%d", node.Tag, node.Value, node.Line, node.Column)
@@ -154,6 +149,6 @@ func (l *List) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func EmptyList() List {
-	l := make(api.AnyList, 0)
+	l := make(api.EntryList, 0)
 	return List{data: &l}
 }
