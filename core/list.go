@@ -97,7 +97,7 @@ func (l List) String() string {
 	return ""
 }
 
-func NewList(val api.AnyList) api.Entry {
+func NewList(val api.AnyList) List {
 	return List{data: &val}
 }
 
