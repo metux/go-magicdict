@@ -11,6 +11,8 @@ import (
 // Simple Dictionary, based on [github.com/metux/go-magicdict/api.AnyMap],
 // implementing the [github.com/metux/go-magicdict/api.Entry] interface
 type Dict struct {
+	// keeping as reference instead of internal, so we can easily copy
+	// this struct whithout throwing ourselves into a parallel universe ;-)
 	data *api.AnyMap
 }
 
@@ -79,7 +81,7 @@ func (d Dict) Elems() api.EntryList {
 		// FIXME: handle error ?
 		v, _, wb := encap(val, d)
 		if wb {
-			(*d.data)[key] = v
+			d.append(key, v)
 		}
 		vals[idx] = v
 		idx++
@@ -120,19 +122,19 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 		case nil:
 			if nlist {
 				e := NewList(make(api.AnyList, 0))
-				(*d.data)[string(head)] = e
+				d.appendK(head, e)
 				return e.Put(tail, v)
 			} else {
 				m := make(api.AnyMap)
 				e := NewDict(&m)
-				(*d.data)[string(head)] = e
+				d.appendK(head, e)
 				return e.Put(tail, v)
 			}
 		case api.AnyMap:
 			return NewDict(&curVal).Put(tail, v)
 		case api.AnyList:
 			l := NewList(curVal)
-			(*d.data)[string(head)] = l
+			d.appendK(head, l)
 			return l.Put(tail, v)
 		case string, int, float64:
 			return api.ErrSubNotSupported
@@ -149,7 +151,7 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 		return nil
 	}
 
-	(*d.data)[string(head)] = v
+	d.appendK(head, v)
 	return nil
 }
 
@@ -188,4 +190,12 @@ func (d Dict) IsScalar() bool {
 // Dict objects aren't constant
 func (d Dict) IsConst() bool {
 	return false
+}
+
+func (d Dict) append(k string, val api.Any) {
+	(*d.data)[k] = val
+}
+
+func (d Dict) appendK(k api.Key, val api.Any) {
+	d.append(string(k), val)
 }

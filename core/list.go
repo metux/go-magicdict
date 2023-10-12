@@ -7,6 +7,8 @@ import (
 )
 
 type List struct {
+	// keeping as reference instead of internal, so we can easily copy
+	// this struct whithout throwing ourselves into a parallel universe ;-)
 	data *api.AnyList
 }
 
@@ -49,7 +51,7 @@ func (l List) Get(k api.Key) (api.Entry, error) {
 func (l List) Put(k api.Key, v api.Entry) error {
 	// append
 	if k.IsAppend() {
-		*(l.data) = append(*(l.data), v)
+		l.append(v)
 		return nil
 	}
 
@@ -111,4 +113,8 @@ func (l List) IsScalar() bool {
 
 func (l List) IsConst() bool {
 	return false
+}
+
+func (l *List) append(val api.Any) {
+	*l.data = append(*l.data, val)
 }
