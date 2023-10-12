@@ -149,28 +149,6 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 		return nil
 	}
 
-	// check for Scalar special handling
-	if v.IsScalar() && v.IsConst() {
-		(*d.data)[string(head)] = v.String()
-		return nil
-	}
-
-	// FIXME: policy for unboxing
-
-	// check for YamlList special handling
-	//    if ymlList, ok := v.(List); ok {
-	//        log.Println("putting a yml list")
-	//        (*d.data)[string(head)] = ymlList.data
-	//        return nil
-	//    }
-
-	// check for Dict special handling
-	//    if ymlDict, ok := v.(Dict); ok {
-	//        log.Println("putting a yml dict")
-	//        (*d.data)[string(head)] = ymlDict.data
-	//        return nil
-	//    }
-
 	(*d.data)[string(head)] = v
 	return nil
 }
