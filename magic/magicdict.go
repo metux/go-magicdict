@@ -177,10 +177,10 @@ func (this MagicDict) MayMergeDefaults() bool {
 
 func (this *MagicDict) Init() *MagicDict {
 	if this.Data == nil {
-		this.Data = core.NewDict(nil)
+		this.Data = core.EmptyDict()
 	}
 	if this.Defaults == nil {
-		this.Defaults = core.NewDict(nil)
+		this.Defaults = core.EmptyDict()
 	}
 	return this
 }
@@ -194,7 +194,7 @@ func (this *MagicDict) InitData(data api.Entry, defaults api.Entry) *MagicDict {
 // only create it via constructor, since some fields *MUST* be initialized
 func NewMagicFromDict(d api.Entry, dflt api.Entry) *MagicDict {
 	if dflt == nil {
-		dflt = core.NewDict(nil)
+		dflt = core.EmptyDict()
 	}
 
 	sp := MagicDict{

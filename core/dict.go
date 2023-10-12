@@ -121,12 +121,11 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 		switch curVal := cur.(type) {
 		case nil:
 			if nlist {
-				e := NewList(make(api.AnyList, 0))
+				e := EmptyList()
 				d.appendK(head, e)
 				return e.Put(tail, v)
 			} else {
-				m := make(api.AnyMap)
-				e := NewDict(&m)
+				e := EmptyDict()
 				d.appendK(head, e)
 				return e.Put(tail, v)
 			}
@@ -198,4 +197,9 @@ func (d Dict) append(k string, val api.Any) {
 
 func (d Dict) appendK(k api.Key, val api.Any) {
 	d.append(string(k), val)
+}
+
+func EmptyDict() Dict {
+	m := make(api.AnyMap)
+	return Dict{data: &m}
 }

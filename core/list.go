@@ -118,3 +118,8 @@ func (l List) IsConst() bool {
 func (l *List) append(val api.Any) {
 	*l.data = append(*l.data, val)
 }
+
+func EmptyList() List {
+	l := make(api.AnyList, 0)
+	return List{data: &l}
+}
