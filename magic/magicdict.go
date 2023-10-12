@@ -46,7 +46,8 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 			Data:     v,
 			Defaults: this.Defaults,
 		}
-		return sp.Init(), nil
+		sp.Init()
+		return sp, nil
 
 	case core.Scalar:
 		v = magicScalar{
@@ -181,32 +182,21 @@ func (this MagicDict) MayMergeDefaults() bool {
 	return this.Data.MayMergeDefaults()
 }
 
-func (this *MagicDict) Init() *MagicDict {
+func (this *MagicDict) Init() {
 	if this.Data == nil {
 		this.Data = core.EmptyDict()
 	}
 	if this.Defaults == nil {
 		this.Defaults = core.EmptyDict()
 	}
-	return this
-}
-
-func (this *MagicDict) InitData(data api.Entry, defaults api.Entry) *MagicDict {
-	this.Data = data
-	this.Defaults = defaults
-	return this.Init()
 }
 
 // only create it via constructor, since some fields *MUST* be initialized
 func NewMagicFromDict(d api.Entry, dflt api.Entry) *MagicDict {
-	if dflt == nil {
-		dflt = core.EmptyDict()
-	}
-
 	sp := MagicDict{
 		Data:     d,
 		Defaults: dflt,
 	}
-
-	return sp.Init()
+	sp.Init()
+	return &sp
 }
