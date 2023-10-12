@@ -79,6 +79,9 @@ func (l List) Put(k api.Key, v api.Entry) error {
 		(*l.data)[i] = v
 	} else {
 		newdata := make(api.AnyList, len(*l.data), i)
+		for idx, v := range *l.data {
+			newdata[idx] = v
+		}
 		newdata[i] = v
 		l.data = &newdata
 	}
