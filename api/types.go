@@ -2,7 +2,7 @@ package api
 
 type EntryList = []Entry
 type KeyList = []Key
-type EntryMap = map[string]Entry
+type EntryMap = map[Key]Entry
 
 // magic attributes (anything w/ prefix "@@") are handled by the currently
 // parsed node itself and have very special meanings. they can be used

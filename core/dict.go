@@ -43,7 +43,7 @@ func (d Dict) Get(k api.Key) (api.Entry, error) {
 
 	head, tail := k.Head()
 
-	sub := (*d.data)[string(head)]
+	sub := (*d.data)[head]
 
 	if tail.Empty() || sub == nil {
 		return sub, nil
@@ -105,15 +105,15 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 	}
 
 	if !tail.Empty() {
-		cur := (*d.data)[string(head)]
+		cur := (*d.data)[head]
 		if cur == nil {
 			if nlist {
 				e := EmptyList()
-				d.appendK(head, e)
+				d.append(head, e)
 				return e.Put(tail, v)
 			} else {
 				e := EmptyDict()
-				d.appendK(head, e)
+				d.append(head, e)
 				return e.Put(tail, v)
 			}
 		}
@@ -122,11 +122,11 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 
 	// explicit delete
 	if v == nil {
-		delete(*d.data, string(head))
+		delete(*d.data, head)
 		return nil
 	}
 
-	d.appendK(head, v)
+	d.append(head, v)
 	return nil
 }
 
@@ -156,12 +156,8 @@ func (d Dict) IsConst() bool {
 	return false
 }
 
-func (d Dict) append(k string, val api.Entry) {
+func (d Dict) append(k api.Key, val api.Entry) {
 	(*d.data)[k] = val
-}
-
-func (d Dict) appendK(k api.Key, val api.Entry) {
-	d.append(string(k), val)
 }
 
 func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
@@ -178,7 +174,8 @@ func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 		if sub.Tag != "!!str" {
 			return fmt.Errorf("dict: unhandled tag: tag=%s val=%s at %d:%d", sub.Tag, sub.Value, sub.Line, sub.Column)
 		}
-		name := sub.Value
+
+		name := api.Key(sub.Value)
 
 		idx++
 		if idx == len(node.Content) {
