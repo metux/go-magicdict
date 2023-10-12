@@ -3,6 +3,8 @@ package api
 type Any = interface{}
 type AnyList = []Any
 type AnyMap = map[string]Any
+type EntryList = []Entry
+type KeyList = []Key
 
 // magic attributes (anything w/ prefix "@@") are handled by the currently
 // parsed node itself and have very special meanings. they can be used

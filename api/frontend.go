@@ -81,18 +81,18 @@ func GetInt(r Entry, k Key, dflt int) int {
 	}
 }
 
-func GetKeys(r Entry, k Key) []Key {
+func GetKeys(r Entry, k Key) KeyList {
 	if ent := GetEntry(r, k); ent != nil {
 		return ent.Keys()
 	}
-	return []Key{}
+	return KeyList{}
 }
 
-func GetElems(r Entry, k Key) []Entry {
+func GetElems(r Entry, k Key) EntryList {
 	if ent := GetEntry(r, k); ent != nil {
 		return ent.Elems()
 	}
-	return []Entry{}
+	return EntryList{}
 }
 
 func SetStr(r Entry, k Key, val string) error {

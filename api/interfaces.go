@@ -8,10 +8,10 @@ type Entry interface {
 	Put(k Key, value Entry) error
 
 	// get a list of direct subkeys
-	Keys() []Key
+	Keys() KeyList
 
 	// get a list of values
-	Elems() []Entry
+	Elems() EntryList
 
 	Empty() bool
 

@@ -57,11 +57,11 @@ func (d Dict) Get(k api.Key) (api.Entry, error) {
 }
 
 // Return the direct sub-keys as string slice
-func (d Dict) Keys() []api.Key {
+func (d Dict) Keys() api.KeyList {
 	d.initMap()
 
 	idx := 0
-	keys := make([]api.Key, len(*d.data))
+	keys := make(api.KeyList, len(*d.data))
 	for key := range *d.data {
 		keys[idx] = api.Key(key)
 		idx++
@@ -70,11 +70,11 @@ func (d Dict) Keys() []api.Key {
 }
 
 // Return the direct sub-elements as slice of [github.com/metux/go-magicdict/api.Entry]
-func (d Dict) Elems() []api.Entry {
+func (d Dict) Elems() api.EntryList {
 	d.initMap()
 
 	idx := 0
-	vals := make([]api.Entry, len(*d.data))
+	vals := make(api.EntryList, len(*d.data))
 	for key, val := range *d.data {
 		// FIXME: handle error ?
 		v, _, wb := encap(val, d)

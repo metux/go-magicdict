@@ -4,12 +4,12 @@ type Scalar struct {
 	Data string
 }
 
-func (sc Scalar) Elems() []Entry {
-	return []Entry{}
+func (sc Scalar) Elems() EntryList {
+	return EntryList{}
 }
 
-func (sc Scalar) Keys() []Key {
-	return []Key{}
+func (sc Scalar) Keys() KeyList {
+	return KeyList{}
 }
 
 // FIXME: correct semantics ?

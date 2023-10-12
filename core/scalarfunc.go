@@ -8,12 +8,12 @@ type ScalarFunc struct {
 	data func() string
 }
 
-func (this ScalarFunc) Elems() []api.Entry {
-	return []api.Entry{}
+func (this ScalarFunc) Elems() api.EntryList {
+	return api.EntryList{}
 }
 
-func (this ScalarFunc) Keys() []api.Key {
-	return []api.Key{}
+func (this ScalarFunc) Keys() api.KeyList {
+	return api.KeyList{}
 }
 
 // FIXME: correct semantics ?

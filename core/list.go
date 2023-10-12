@@ -18,16 +18,16 @@ func (l List) GetIdx(idx int) (api.Entry, error) {
 	return v, e
 }
 
-func (l List) Elems() []api.Entry {
-	data := make([]api.Entry, len(*l.data))
+func (l List) Elems() api.EntryList {
+	data := make(api.EntryList, len(*l.data))
 	for x := 0; x < len(*l.data); x++ {
 		data[x], _ = l.GetIdx(x)
 	}
 	return data
 }
 
-func (l List) Keys() []api.Key {
-	data := make([]api.Key, len(*l.data))
+func (l List) Keys() api.KeyList {
+	data := make(api.KeyList, len(*l.data))
 	for x := 0; x < len(*l.data); x++ {
 		data[x] = api.Key(strconv.Itoa(x))
 	}

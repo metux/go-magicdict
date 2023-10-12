@@ -31,21 +31,21 @@ func (this Symlink) fetch() (api.Entry, error) {
 	return this.Cacheval, nil
 }
 
-func (this Symlink) Elems() []api.Entry {
+func (this Symlink) Elems() api.EntryList {
 	if orig, err := this.fetch(); err == nil {
 		return orig.Elems()
 	} else {
 		log.Printf("symlink fetch error: %v", err)
-		return []api.Entry{}
+		return api.EntryList{}
 	}
 }
 
-func (this Symlink) Keys() []api.Key {
+func (this Symlink) Keys() api.KeyList {
 	if orig, err := this.fetch(); err == nil {
 		return orig.Keys()
 	} else {
 		log.Printf("symlink fetch error: %v", err)
-		return []api.Key{}
+		return api.KeyList{}
 	}
 }
 
