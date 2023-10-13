@@ -2,7 +2,8 @@ package api
 
 import (
 	"strconv"
-	"strings"
+
+	"github.com/metux/go-magicdict/utils"
 )
 
 // get a single entry from dict and key
@@ -63,22 +64,11 @@ func GetStrMap(r Entry, k Key) map[string]string {
 }
 
 func GetBool(r Entry, k Key, dflt bool) bool {
-	switch strings.ToLower(GetStr(r, k)) {
-	case "1", "y", "yes", "true", "on":
-		return true
-	case "0", "n", "no", "false", "off":
-		return false
-	default:
-		return dflt
-	}
+	return utils.StrToBool(GetStr(r, k), dflt)
 }
 
 func GetInt(r Entry, k Key, dflt int) int {
-	if i, err := strconv.Atoi(GetStr(r, k)); err == nil {
-		return i
-	} else {
-		return dflt
-	}
+	return utils.StrToInt(GetStr(r, k), dflt)
 }
 
 func GetKeys(r Entry, k Key) KeyList {
@@ -105,24 +95,15 @@ func SetStr(r Entry, k Key, val string) error {
 // Append string value to a list entry.
 // Automatically creates the list entry if not existing yet
 func AppendStr(r Entry, k Key, val string) error {
-	if r == nil {
-		return ErrNilInterface
-	}
-	return r.Put(Key(string(k)+"[]::[]"), Scalar{Data: val})
+	return SetStr(r, Key(string(k)+"[]::[]"), val)
 }
 
 func SetInt(r Entry, k Key, val int) error {
-	if r == nil {
-		return ErrNilInterface
-	}
-	return r.Put(k, Scalar{Data: strconv.Itoa(val)})
+	return SetStr(r, k, strconv.Itoa(val))
 }
 
 func SetBool(r Entry, k Key, val bool) error {
-	if r == nil {
-		return ErrNilInterface
-	}
-	return r.Put(k, Scalar{Data: strconv.FormatBool(val)})
+	return SetStr(r, k, strconv.FormatBool(val))
 }
 
 // Delete an entry with given key within given root entry, by putting nil value
