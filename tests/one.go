@@ -11,7 +11,7 @@ func RunTestOne(t *testing.T, r api.Entry) {
 
 	c := Checker{Test: t, Root: r}
 
-	c.AssertKeys("", []string{"xxx", "foo", "bar", "yyy", "hello", "ref", "butter", "zzz", "x123"})
+	c.AssertKeys("", []string{"escapetest", "xxx", "foo", "bar", "yyy", "hello", "ref", "butter", "zzz", "x123"})
 	c.AssertKeys("bar", []string{"x", "y", "tree"})
 	c.AssertKeys("bar::tree", []string{"leaf", "leaf2", "list", "knollo", "knollo2", "myname"})
 
@@ -76,4 +76,7 @@ func RunTestOne(t *testing.T, r api.Entry) {
 	// checking defaults set
 	api.SetDefaultStr(c.Root, api.Key("bar::tree::leaf23"), "17")
 	c.AssertString("bar::tree::leaf23", "17")
+
+	// check escaping
+	c.AssertString("escapetest", "foo-${foo}")
 }

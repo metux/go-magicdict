@@ -5,12 +5,12 @@ package parser
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/metux/go-magicdict/utils"
 )
 
 const (
+	tokenEscDollar = "\\$"
 	tokenRefStart  = "${"
 	tokenRefEnd    = "}"
 	tokenFuncStart = "$("
@@ -41,7 +41,8 @@ func parseRef(s []string, expr Expression, strict bool) ([]string, Expression, e
 			if strict {
 				return tail, sub, e
 			}
-			log.Println(e)
+		case tokenEscDollar:
+			sub.AddLiteral("$")
 		default:
 			sub.AddLiteral(head)
 		}
@@ -52,7 +53,6 @@ func parseRef(s []string, expr Expression, strict bool) ([]string, Expression, e
 	if strict {
 		return s, expr, e
 	}
-	log.Println(e)
 	return s, expr, nil
 }
 
@@ -73,7 +73,6 @@ func parseFunc(s []string, expr Expression, strict bool) ([]string, Expression, 
 			if strict {
 				return tail, sub, e
 			}
-			log.Println(e)
 		case tokenFuncStart:
 			if tail, sub, err = parseFunc(tail, sub, strict); err != nil {
 				return tail, sub, err
@@ -81,6 +80,8 @@ func parseFunc(s []string, expr Expression, strict bool) ([]string, Expression, 
 		case end:
 			expr.AddFunc(sub)
 			return tail, expr, nil
+		case tokenEscDollar:
+			sub.AddLiteral("$")
 		default:
 			sub.AddLiteral(head)
 		}
@@ -91,13 +92,12 @@ func parseFunc(s []string, expr Expression, strict bool) ([]string, Expression, 
 	if strict {
 		return s, expr, e
 	}
-	log.Println(e)
 	return s, expr, nil
 }
 
 func ParseExpression(text string, strict bool) (Expression, error) {
 
-	tokens := []string{tokenRefStart, tokenRefEnd, tokenFuncStart, tokenFuncEnd}
+	tokens := []string{tokenEscDollar, tokenRefStart, tokenRefEnd, tokenFuncStart, tokenFuncEnd}
 	s := utils.SplitTokens(text, tokens)
 
 	elems := NewExpr()
@@ -114,12 +114,9 @@ func ParseExpression(text string, strict bool) (Expression, error) {
 			if tail, elems, err = parseFunc(tail, elems, strict); err != nil {
 				return elems, err
 			}
-		case tokenRefEnd, tokenFuncEnd:
-			e := fmt.Errorf("unexpected \"%s\" in toplevel", head)
-			if strict {
-				return nil, e
-			}
-			log.Println(e)
+		case tokenEscDollar:
+			elems.AddLiteral("$")
+		/* tokenRefEnd and tokenFuncEnd will fall through here, correctly */
 		default:
 			elems.AddLiteral(head)
 		}

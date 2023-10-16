@@ -13,3 +13,5 @@ bar:
         knollo2: foobar-${foo::0}-for-me
 
 yyy: huhu
+
+escapetest: foo-\${foo}
