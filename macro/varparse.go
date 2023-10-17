@@ -66,7 +66,10 @@ func ProcessVars(v api.Entry, root api.Entry) (api.Entry, error) {
 		switch y.Type {
 		case parser.TermRef:
 			if val, err := resolveRef(y, v, root); err == nil {
-				retstr = retstr + val.String()
+				// nil is treated as "" here
+				if val != nil {
+					retstr = retstr + val.String()
+				}
 			} else {
 				return nil, err
 			}
