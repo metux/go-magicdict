@@ -83,9 +83,26 @@ func RunTestOne(t *testing.T, r api.Entry) {
 	c.AssertString("one::two::three::five::six", "23")
 	c.AssertEntry("one::two::three::five").AssertString("six", "23")
 
+	api.SetStr(c.Root, api.Key("one::two::three::five::six1"), "24")
+	c.AssertString("one::two::three::five::six1", "24")
+	c.AssertEntry("one::two::three::five").AssertString("six1", "24")
+
 	// check escaping
 	c.AssertString("escapetest", "foo-${foo}")
 
 	// check missing vars
 	c.AssertString("schinken", "")
+
+	// check set/get
+	api.SetStr(c.Root, "knollo::hundert::foo", "hello")
+	c.AssertString("knollo::hundert::foo", "hello")
+
+	// test makedict
+	newdict, err := api.MakeDict(c.Root, api.Key("foox::bar::xxx"))
+	if err != nil {
+		t.Fatalf("MakeDict() failed: %s", err)
+	}
+
+	api.SetStr(newdict, api.Key("wurst"), "salami")
+	c.AssertString("foox::bar::xxx::wurst", "salami")
 }
