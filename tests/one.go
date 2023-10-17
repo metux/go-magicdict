@@ -74,8 +74,14 @@ func RunTestOne(t *testing.T, r api.Entry) {
 	c.AssertString("x123::one::three", "parent-is-one")
 
 	// checking defaults set
-	api.SetDefaultStr(c.Root, api.Key("bar::tree::leaf23"), "17")
-	c.AssertString("bar::tree::leaf23", "17")
+	api.SetDefaultStr(c.Root, api.Key("bar::tree::leaf23"), "18")
+	c.AssertString("bar::tree::leaf23", "18")
+	c.AssertEntry("bar::tree").AssertString("leaf23", "18")
+
+	// checking defaults set
+	api.SetDefaultStr(c.Root, api.Key("one::two::three::five::six"), "23")
+	c.AssertString("one::two::three::five::six", "23")
+	c.AssertEntry("one::two::three::five").AssertString("six", "23")
 
 	// check escaping
 	c.AssertString("escapetest", "foo-${foo}")

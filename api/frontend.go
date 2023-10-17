@@ -114,6 +114,10 @@ func SetDefaultEntry(r Entry, k Key, val Entry) error {
 	return SetEntry(r, k.MagicDefaults(), val)
 }
 
+func GetDefaultStr(r Entry, k Key) string {
+	return GetStr(r, k.MagicDefaults())
+}
+
 func SetDefaultStr(r Entry, k Key, val string) error {
 	return SetStr(r, k.MagicDefaults(), val)
 }
