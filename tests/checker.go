@@ -66,7 +66,7 @@ func (c Checker) AssertMissing(k api.Key) {
 }
 
 func (c Checker) AssertString(k api.Key, want string) {
-	if str := c.FetchScalar(k).String(); str != want {
+	if str := api.GetStr(c.Root, k); str != want {
 		c.Test.Fatalf("\"%s\" should be \"%s\" but is \"%s\"", k, want, str)
 	}
 	c.Test.Logf("asserted key %s is string value %s\n", k, want)

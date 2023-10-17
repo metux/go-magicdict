@@ -32,3 +32,5 @@ x123:
     one:
         two: name-is-${@@KEY}
         three: parent-is-${@@PARENT::@@KEY}
+
+schinken: ${brot::wurst}
