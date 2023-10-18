@@ -15,6 +15,8 @@ const (
 	MagicAttrKey = Key("@@KEY")
 	// reference to the node's parent entry itself (entry)
 	MagicAttrParent = Key("@@PARENT")
+	// reference to the parent's id
+	MagicAttrParentKey = Key("@@PARENT::@@KEY")
 	// name of the node's full path inside MagicDict object (string)
 	MagicAttrPath = Key("@@PATH")
 	// magic key for appending a list element
