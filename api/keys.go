@@ -107,6 +107,11 @@ func (k Key) R() string {
 	return "${" + string(k) + "}"
 }
 
+// stringer interface
+func (k Key) String() string {
+	return string(k)
+}
+
 // convert into a key for creating new list
 func (k Key) MkAppendList() Key {
 	return Key(string(k) + KeyAppendList)
