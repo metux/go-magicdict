@@ -5,6 +5,13 @@ import (
 	"strings"
 )
 
+const (
+	KeyDelimiter  = "::"
+	KeyAppendList = "[]::[]"
+	RefStart      = "${"
+	RefEnd        = "}"
+)
+
 // Wraps a key or key path (string) with additional operations
 // Key pathes are similar to file system pathes, but using "::" as delimiter
 //
@@ -26,7 +33,7 @@ type Key string
 // Empty keys return both results empty ("")
 // If just one element (single key), returning it as head and "" as tail
 func (k Key) Head() (Key, Key) {
-	if i := strings.Index(string(k), "::"); i >= 0 {
+	if i := strings.Index(string(k), KeyDelimiter); i >= 0 {
 		return Key(k[:i]), k[i+2:]
 	}
 	return k, ""
@@ -37,7 +44,7 @@ func (k Key) Head() (Key, Key) {
 // Empty keys return both results empty ("")
 // If just one element (single key), returning it as tail and "" as head
 func (k Key) Tail() (Key, Key) {
-	if i := strings.LastIndex(string(k), "::"); i >= 0 {
+	if i := strings.LastIndex(string(k), KeyDelimiter); i >= 0 {
 		return k[:i], k[i+2:]
 	}
 	return "", k
@@ -54,7 +61,7 @@ func (k Key) AddPrefix(prefix string) Key {
 	if prefix == "" {
 		return k
 	}
-	return Key(prefix + "::" + string(k))
+	return Key(prefix + KeyDelimiter + string(k))
 }
 
 // Create a new key path by appending key and suffix
@@ -68,7 +75,7 @@ func (k Key) AppendStr(suffix string) Key {
 		return k
 	}
 
-	return Key(string(k) + "::" + suffix)
+	return Key(string(k) + KeyDelimiter + suffix)
 }
 
 // Create a new key path by appending key and suffix
@@ -98,4 +105,9 @@ func (k Key) S() string {
 // converts the key to a variable reference to the key
 func (k Key) R() string {
 	return "${" + string(k) + "}"
+}
+
+// convert into a key for creating new list
+func (k Key) MkAppendList() Key {
+	return Key(string(k) + KeyAppendList)
 }

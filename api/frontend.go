@@ -99,7 +99,7 @@ func SetStr(r Entry, k Key, val string) error {
 // Append string value to a list entry.
 // Automatically creates the list entry if not existing yet
 func AppendStr(r Entry, k Key, val string) error {
-	return SetStr(r, Key(string(k)+"[]::[]"), val)
+	return SetStr(r, k.MkAppendList(), val)
 }
 
 func SetInt(r Entry, k Key, val int) error {
@@ -149,8 +149,7 @@ func MakeList(root Entry, k Key) (Entry, error) {
 	if root == nil {
 		return nil, ErrNilInterface
 	}
-	k2 := Key(string(k) + "[]::[]")
-	if err := root.Put(k2, nil); err != nil {
+	if err := root.Put(k.MkAppendList(), nil); err != nil {
 		return nil, err
 	}
 	return root.Get(k)
