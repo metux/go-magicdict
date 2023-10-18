@@ -95,7 +95,7 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 		return this.Root.Get(p1)
 
 	case api.MagicAttrDefaults:
-		return this.Defaults, nil
+		return api.MakeDict(this.Defaults, this.Path)
 	}
 
 	ent, err := this.Data.Get(k)
@@ -168,7 +168,7 @@ func (this MagicDict) Keys() []api.Key {
 
 func (this MagicDict) Put(k api.Key, v api.Entry) error {
 	if head, tail := k.Head(); head == api.MagicAttrDefaults {
-		return this.Defaults.Put(tail, v)
+		return this.Defaults.Put(this.Path.Append(tail), v)
 	}
 	return this.Data.Put(k, v)
 }
