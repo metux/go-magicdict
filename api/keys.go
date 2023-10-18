@@ -90,3 +90,7 @@ func (k Key) AppendIdx(idx int) Key {
 func (k Key) MagicDefaults() Key {
 	return MagicAttrDefaults.Append(k)
 }
+
+func (k Key) S() string {
+	return string(k)
+}
