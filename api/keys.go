@@ -94,3 +94,8 @@ func (k Key) MagicDefaults() Key {
 func (k Key) S() string {
 	return string(k)
 }
+
+// converts the key to a variable reference to the key
+func (k Key) R() string {
+	return "${" + string(k) + "}"
+}
