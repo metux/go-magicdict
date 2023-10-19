@@ -28,8 +28,3 @@ type Entry interface {
 	// Typechecks
 	IsScalar() bool
 }
-
-type EntryDefaults interface {
-	Entry
-	SetDefaultEntry(k Key, val Entry) error
-}

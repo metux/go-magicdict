@@ -129,17 +129,6 @@ func (this MagicDict) String() string {
 	return this.Data.String()
 }
 
-// NOTE: this needs pointer receiver
-func (this *MagicDict) SetDefaultEntry(k api.Key, val api.Entry) error {
-	// FIXME: maybe nil should mean clear all ?
-	if val == nil {
-		return api.ErrNilInterface
-	}
-	return this.Defaults.Put(k, val)
-}
-
-// FIXME: add AddDefaults() from list of key+value
-
 // this prevents unwanted merging (eg. on lists)
 func (this MagicDict) mergeDef() api.Entry {
 	if this.MayMergeDefaults() {

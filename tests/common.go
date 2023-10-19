@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/metux/go-magicdict/api"
-	"github.com/metux/go-magicdict/core"
 )
 
 // explicitly skip nil's
@@ -42,13 +41,5 @@ func checkKeys(t *testing.T, got []api.Key, want []string) {
 		if s != want[idx] {
 			t.Fatalf("IDX #%d mismatch: \"%s\" should be \"%s\"", idx, s, want[idx])
 		}
-	}
-}
-
-func putDefaultStr(t *testing.T, root api.Entry, k api.Key, v string) {
-	if d, ok := root.(api.EntryDefaults); ok {
-		d.SetDefaultEntry(k, core.NewScalarStr(v))
-	} else {
-		t.Fatalf("root is not Defaults")
 	}
 }

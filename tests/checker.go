@@ -24,7 +24,9 @@ func (c Checker) AssertKeys(k api.Key, want []string) {
 
 // note that this only works if the upper layer doesn't have this entry
 func (c Checker) AssertDefaultStr(k api.Key, v string) {
-	putDefaultStr(c.Test, c.Root, k, v)
+	if err := api.SetDefaultStr(c.Root, k, v); err != nil {
+		c.Test.Fatalf("failed setting default string: %s", err)
+	}
 	c.AssertString(k, v)
 }
 
