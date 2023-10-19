@@ -8,21 +8,6 @@ import (
 	"testing"
 )
 
-type MySpec struct {
-	magic.MagicDict
-}
-
-func NewMySpec(root api.Entry, dflt api.Entry) api.Entry {
-	m := MySpec{
-		magic.MagicDict{
-			Data:     root,
-			Defaults: dflt,
-		},
-	}
-	m.Init()
-	return m
-}
-
 func loadOne(t *testing.T) api.Entry {
 	root, err := core.YamlLoad("tests/one.yaml")
 	if err != nil {
