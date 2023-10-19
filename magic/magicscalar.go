@@ -68,3 +68,7 @@ func (this magicScalar) Empty() bool {
 func (this magicScalar) MayMergeDefaults() bool {
 	return false
 }
+
+func (this magicScalar) MarshalYAML() (interface{}, error) {
+	return this.Data, nil
+}

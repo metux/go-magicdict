@@ -207,6 +207,11 @@ func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
+// Implements the yaml.Marshaler interface
+func (d Dict) MarshalYAML() (interface{}, error) {
+	return d.data, nil
+}
+
 func EmptyDict() Dict {
 	m := make(api.EntryMap)
 	return Dict{data: &m}

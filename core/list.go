@@ -148,6 +148,11 @@ func (l *List) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
+// Implements the yaml.Marshaler interface
+func (l List) MarshalYAML() (interface{}, error) {
+	return l.data, nil
+}
+
 func EmptyList() List {
 	l := make(api.EntryList, 0)
 	return List{data: &l}

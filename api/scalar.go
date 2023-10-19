@@ -44,3 +44,8 @@ func (sc Scalar) Empty() bool {
 func (sc Scalar) IsScalar() bool {
 	return true
 }
+
+// Implements the yaml.Marshaler interface
+func (sc Scalar) MarshalYAML() (interface{}, error) {
+	return sc.Data, nil
+}

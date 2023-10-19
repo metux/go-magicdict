@@ -10,6 +10,9 @@ import (
 // Linking to an path inside some parent entry
 // Each operation first fetches the target entry and then calls it
 // With caching enabled, result of first (successful) fetch is reused.
+//
+// NOTE: in most cases, using variable substitution in MagicDict
+// is the better alternative
 type Symlink struct {
 	Parent   api.Entry
 	Path     api.Key
@@ -110,6 +113,17 @@ func (this Symlink) IsScalar() bool {
 		log.Printf("Symlink fetch error: %v", err)
 		return true
 	}
+}
+
+// Implementing yml.Marshaler interface
+// Returning the entry that the link is pointing to, thus will be mashaled
+// like as the referenced entry would be directly here.
+func (this Symlink) MarshalYAML() (interface{}, error) {
+	// Not having a MarshalYAML() causes infinite loop in yaml encoder,
+	// so we're doing lookup and return the proxied entry.
+	// OTOH, we could also send out the entry referred by Path
+	// The best would be telling yaml encoder to emit a reference
+	return this.Parent.Get(this.Path)
 }
 
 func NewSymlink(parent api.Entry, path api.Key, caching bool) api.Entry {
