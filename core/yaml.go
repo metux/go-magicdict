@@ -10,20 +10,20 @@ import (
 )
 
 // load a Dict from yaml from byte array (using yaml.v3)
-func YamlParse(text []byte) (*Dict, error) {
+func YamlParse(text []byte) (Dict, error) {
 	d := EmptyDict()
 	err := yaml.Unmarshal(text, &d)
 	if err != nil {
-		return nil, err
+		return Dict{}, err
 	}
-	return &d, nil
+	return d, nil
 }
 
 // load a Dict from yaml file (using yaml.v3)
-func YamlLoad(fn string) (*Dict, error) {
+func YamlLoad(fn string) (Dict, error) {
 	text, err := os.ReadFile(fn)
 	if err != nil {
-		return nil, err
+		return Dict{}, err
 	}
 	return YamlParse(text)
 }
