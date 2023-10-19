@@ -12,6 +12,8 @@ import (
 // others have defaults==nil
 // Splittng it up would just save one PTR per instance, but add extra
 // complexity and allocations
+//
+// Only create it via NewMagicFromDict() or don't forget to call Init()
 type MagicDict struct {
 	Root *MagicDict
 	Data api.Entry
@@ -185,11 +187,11 @@ func (this MagicDict) MarshalYAML() (interface{}, error) {
 }
 
 // only create it via constructor, since some fields *MUST* be initialized
-func NewMagicFromDict(d api.Entry, dflt api.Entry) *MagicDict {
+func NewMagicFromDict(d api.Entry, dflt api.Entry) MagicDict {
 	sp := MagicDict{
 		Data:     d,
 		Defaults: dflt,
 	}
 	sp.Init()
-	return &sp
+	return sp
 }
