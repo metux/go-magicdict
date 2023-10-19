@@ -13,17 +13,14 @@ import (
 func YamlParse(text []byte) (Dict, error) {
 	d := EmptyDict()
 	err := yaml.Unmarshal(text, &d)
-	if err != nil {
-		return Dict{}, err
-	}
-	return d, nil
+	return d, err
 }
 
 // load a Dict from yaml file (using yaml.v3)
 func YamlLoad(fn string) (Dict, error) {
 	text, err := os.ReadFile(fn)
 	if err != nil {
-		return Dict{}, err
+		return EmptyDict(), err
 	}
 	return YamlParse(text)
 }
