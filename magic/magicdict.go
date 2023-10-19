@@ -182,10 +182,6 @@ func (this *MagicDict) Init() {
 	}
 }
 
-func (this MagicDict) MarshalYAML() (interface{}, error) {
-	return this.Data, nil
-}
-
 // only create it via constructor, since some fields *MUST* be initialized
 func NewMagicFromDict(d api.Entry, dflt api.Entry) MagicDict {
 	sp := MagicDict{

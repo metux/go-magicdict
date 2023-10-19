@@ -18,6 +18,9 @@ func YamlParse(text []byte) (Dict, error) {
 
 // load a Dict from yaml file (using yaml.v3)
 func YamlLoad(fn string) (Dict, error) {
+	if fn == "" {
+		return EmptyDict(), nil
+	}
 	text, err := os.ReadFile(fn)
 	if err != nil {
 		return EmptyDict(), err
