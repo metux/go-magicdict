@@ -98,6 +98,14 @@ func (k Key) MagicDefaults() Key {
 	return MagicAttrDefaults.Append(k)
 }
 
+func (k Key) MagicLiteralPost() Key {
+	return k.Append(MagicAttrLiteral)
+}
+
+func (k Key) MagicLiteralPre() Key {
+	return MagicAttrLiteral.Append(k)
+}
+
 func (k Key) S() string {
 	return string(k)
 }

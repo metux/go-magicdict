@@ -105,4 +105,6 @@ func RunTestOne(t *testing.T, r api.Entry) {
 
 	api.SetStr(newdict, api.Key("wurst"), "salami")
 	c.AssertString("foox::bar::xxx::wurst", "salami")
+
+	RunTestLiteral(c)
 }

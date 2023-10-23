@@ -21,6 +21,9 @@ type MagicDict struct {
 	// this is always from the root (need to prepend Path)
 	Defaults api.Entry
 
+	// disable variable/macro substitution
+	Literal bool
+
 	Path api.Key
 }
 
@@ -44,6 +47,7 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 		// const strings or those w/ string interface should not be boxed ?
 		sp := MagicDict{
 			Root:     r,
+			Literal:  this.Literal,
 			Path:     this.Path.Append(k),
 			Data:     v,
 			Defaults: this.Defaults,
@@ -57,6 +61,10 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 			Path: this.Path.Append(k),
 			Data: v.String(),
 		}
+	}
+
+	if this.Literal {
+		return v, nil
 	}
 
 	return macro.ProcessVars(v, r)
@@ -82,6 +90,15 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 	}
 
 	switch head {
+	case api.MagicAttrLiteral:
+		return MagicDict{
+			Root:     this.Root,
+			Literal:  true,
+			Path:     this.Path,
+			Data:     this.Data,
+			Defaults: this.Defaults,
+		}, nil
+
 	case api.MagicAttrPath:
 		return core.NewScalarStr(string(this.Path)), nil
 

@@ -23,4 +23,6 @@ const (
 	MagicAttrAppend = Key("[]")
 	// magic key prefix for accessing defaults
 	MagicAttrDefaults = Key("@@DEFAULTS")
+	// magic key for disabling variable/macro substitution
+	MagicAttrLiteral = Key("@@LITERAL")
 )
