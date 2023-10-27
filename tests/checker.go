@@ -14,12 +14,18 @@ type Checker struct {
 	Root api.Entry
 }
 
+func (c Checker) Fatalf(str string, param ...any) {
+	c.Test.Logf("%s", debug.Stack())
+	c.Test.Fatalf(str, param...)
+}
+
 func (c Checker) AssertKeys(k api.Key, want []string) {
 	keys := fetchEntry(c.Test, c.Root, k).Keys()
 	if len(keys) != len(want) {
-		c.Test.Fatalf("keys size mismatch: %d should be %d (\"%s\" vs \"%s\")", len(keys), len(want), keys, want)
+		c.Fatalf("keys size mismatch: %d should be %d (\"%s\" vs \"%s\")", len(keys), len(want), keys, want)
 	}
 	checkKeys(c.Test, keys, want)
+	c.Test.Logf("asserted key %s has subkeys %s", k, want)
 }
 
 // note that this only works if the upper layer doesn't have this entry
@@ -52,6 +58,7 @@ func (c Checker) AssertListStr(k api.Key, want []string) {
 	}
 
 	checkStrs(c.Test, el2, want)
+	c.Test.Logf("asserted key %s is string list %s -- %s", k, want, el2)
 }
 
 func (c Checker) AssertPutStr(k api.Key, v string) {
