@@ -21,6 +21,10 @@ func checkStrs(t *testing.T, got []string, want []string) {
 	sort.Strings(got)
 	sort.Strings(want)
 
+	if len(got) != len(want) {
+		t.Fatalf("checkStrs: size mismatch %d want %d -- %s vs %s", len(got), len(want), got, want)
+	}
+
 	for idx, s := range got {
 		if s != want[idx] {
 			t.Fatalf("IDX #%d mismatch: \"%s\" should be \"%s\"", idx, s, want[idx])
