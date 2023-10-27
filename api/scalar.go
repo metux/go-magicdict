@@ -1,5 +1,9 @@
 package api
 
+import (
+	"fmt"
+)
+
 type Scalar struct {
 	Data string
 }
@@ -18,7 +22,7 @@ func (sc Scalar) Get(k Key) (Entry, error) {
 		return sc, nil
 	}
 
-	return nil, ErrSubNotSupported
+	return nil, fmt.Errorf("Scalar \"%s\" does not support Get(): %w", sc.Data, ErrSubNotSupported)
 }
 
 func (sc Scalar) String() string {
@@ -30,7 +34,7 @@ func (sc Scalar) IsConst() bool {
 }
 
 func (sc Scalar) Put(k Key, v Entry) error {
-	return ErrSubNotSupported
+	return fmt.Errorf("Scalar \"%s\" does not support Put(): %w", sc.Data, ErrSubNotSupported)
 }
 
 func (sc Scalar) MayMergeDefaults() bool {
