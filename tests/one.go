@@ -107,4 +107,5 @@ func RunTestOne(t *testing.T, r api.Entry) {
 	c.AssertString("foox::bar::xxx::wurst", "salami")
 
 	RunTestLiteral(c)
+	RunTestListCreateAppend(c)
 }

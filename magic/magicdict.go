@@ -175,8 +175,32 @@ func (this MagicDict) Keys() []api.Key {
 }
 
 func (this MagicDict) Put(k api.Key, v api.Entry) error {
-	if head, tail := k.Head(); head == api.MagicAttrDefaults {
+	head, tail := k.Head()
+
+	if head == api.MagicAttrDefaults {
+		// FIXME: this cannot walk across references yet
 		return this.Defaults.Put(this.Path.Append(tail), v)
+	}
+
+	// this is a bit ugly, since we have to walk across references
+	if !tail.Empty() {
+		nlist, head := head.IsListOp()
+		cur, _ := this.Get(head)
+		if cur == nil {
+			if nlist {
+				cur = core.EmptyList()
+			} else {
+				cur = core.EmptyDict()
+			}
+			if err := this.Data.Put(head, cur); err != nil {
+				return err
+			}
+			cur, _ = this.Get(head)
+			if cur == nil {
+				panic("cur 2nd time nil")
+			}
+		}
+		return cur.Put(tail, v)
 	}
 	return this.Data.Put(k, v)
 }
