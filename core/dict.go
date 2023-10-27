@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -99,9 +98,9 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 
 	head, tail := k.Head()
 	nlist := false
-	if strings.HasSuffix(string(head), "[]") {
-		nlist = true
-		head = head[:len(head)-2]
+	if ok, lk := head.IsListOp(); ok {
+		nlist = ok
+		head = lk
 	}
 
 	if !tail.Empty() {

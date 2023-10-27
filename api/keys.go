@@ -124,3 +124,23 @@ func (k Key) String() string {
 func (k Key) MkAppendList() Key {
 	return Key(string(k) + KeyAppendList)
 }
+
+func (k Key) IsListOp() (bool, Key) {
+	if strings.HasSuffix(string(k), "[]") {
+		return true, k[:len(k)-2]
+	}
+	if strings.HasSuffix(string(k), "{}") {
+		return false, k[:len(k)-2]
+	}
+	return false, k
+}
+
+func (k Key) IsDictOp() (bool, Key) {
+	if strings.HasSuffix(string(k), "{}") {
+		return false, k[:len(k)-2]
+	}
+	if strings.HasSuffix(string(k), "{}") {
+		return true, k[:len(k)-2]
+	}
+	return false, k
+}
