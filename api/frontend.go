@@ -51,8 +51,8 @@ func GetStrList(r Entry, k Key) []string {
 }
 
 // fetch entry from dict by key and return it's subkeys and values as map
-func GetStrMap(r Entry, k Key) map[string]string {
-	m := make(map[string]string)
+func GetStrMap(r Entry, k Key) map[Key]string {
+	m := make(map[Key]string)
 	if ent := GetEntry(r, k); ent != nil {
 		for _, idx := range ent.Keys() {
 			if sub, _ := ent.Get(idx); sub != nil {

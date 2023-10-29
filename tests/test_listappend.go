@@ -10,7 +10,7 @@ func RunTestListCreateAppend(c Checker) {
 	api.SetStr(c.Root, "foolist::l1[]::[]", "one")
 	c.AssertListStr("foolist::l1", []string{"one"})
 	api.SetStr(c.Root, "foolist::l1[]::[]", "two")
-	c.AssertListStr("foolist::l1", []string{"one","two"})
+	c.AssertListStr("foolist::l1", []string{"one", "two"})
 
 	c.Test.Logf("testing list create/append: done")
 }
