@@ -2,22 +2,31 @@ package core
 
 import (
 	"fmt"
+	"log"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 
 	"github.com/metux/go-magicdict/api"
 )
 
+type dictData struct {
+	sync.RWMutex
+	M map[api.Key]api.Entry
+}
+
 // Simple Dictionary, based on map of [github.com/metux/go-magicdict/api.Entry],
 // implementing the [github.com/metux/go-magicdict/api.Entry] interface
 type Dict struct {
 	// keeping as reference instead of internal, so we can easily copy
 	// this struct whithout throwing ourselves into a parallel universe ;-)
-	data *api.EntryMap
+	data *dictData
 }
 
 func (d Dict) Serialize() (string, error) {
-	text, err := yaml.Marshal(d.data)
+	d.data.RLock()
+	text, err := yaml.Marshal(d.data.M)
+	d.data.RUnlock()
 	if err != nil {
 		return "", err
 	}
@@ -25,8 +34,9 @@ func (d Dict) Serialize() (string, error) {
 }
 
 func (d Dict) initMap() {
-	if *(d.data) == nil {
-		*(d.data) = make(api.EntryMap)
+	if d.data.M == nil {
+		log.Println("=== init map")
+		d.data.M = make(api.EntryMap)
 	}
 }
 
@@ -36,13 +46,15 @@ func (d Dict) Get(k api.Key) (api.Entry, error) {
 		return d, nil
 	}
 
-	if d.data == nil {
+	if d.data.M == nil {
 		return nil, api.ErrDictNotInitialized
 	}
 
 	head, tail := k.Head()
 
-	sub := (*d.data)[head]
+	d.data.RLock()
+	sub := d.data.M[head]
+	d.data.RUnlock()
 
 	if tail.Empty() || sub == nil {
 		return sub, nil
@@ -56,11 +68,13 @@ func (d Dict) Keys() api.KeyList {
 	d.initMap()
 
 	idx := 0
-	keys := make(api.KeyList, len(*d.data))
-	for key := range *d.data {
+	d.data.RLock()
+	keys := make(api.KeyList, len(d.data.M))
+	for key := range d.data.M {
 		keys[idx] = api.Key(key)
 		idx++
 	}
+	d.data.RUnlock()
 	return keys
 }
 
@@ -69,11 +83,13 @@ func (d Dict) Elems() api.EntryList {
 	d.initMap()
 
 	idx := 0
-	vals := make(api.EntryList, len(*d.data))
-	for _, val := range *d.data {
+	d.data.RLock()
+	vals := make(api.EntryList, len(d.data.M))
+	for _, val := range d.data.M {
 		vals[idx] = val
 		idx++
 	}
+	d.data.RUnlock()
 	return vals
 }
 
@@ -103,35 +119,43 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 		head = lk
 	}
 
+	d.data.Lock()
+
 	if !tail.Empty() {
-		cur := (*d.data)[head]
+		cur := d.data.M[head]
 		if cur == nil {
 			if nlist {
 				e := EmptyList()
-				d.append(head, e)
+				d.data.M[head] = e
+				d.data.Unlock()
 				return e.Put(tail, v)
 			} else {
 				e := EmptyDict()
-				d.append(head, e)
+				d.data.M[head] = e
+				d.data.Unlock()
 				return e.Put(tail, v)
 			}
 		}
+		d.data.Unlock()
 		return cur.Put(tail, v)
 	}
 
 	// explicit delete
 	if v == nil {
-		delete(*d.data, head)
-		return nil
+		delete(d.data.M, head)
+	} else {
+		d.data.M[head] = v
 	}
-
-	d.append(head, v)
+	d.data.Unlock()
 	return nil
 }
 
 // Check whether the dict is empty
 func (d Dict) Empty() bool {
-	return len(*d.data) == 0
+	d.data.RLock()
+	res := len(d.data.M) == 0
+	d.data.RUnlock()
+	return res
 }
 
 // Does nothing, just return "". Dicts don't have a valid string representation.
@@ -155,16 +179,15 @@ func (d Dict) IsConst() bool {
 	return false
 }
 
-func (d Dict) append(k api.Key, val api.Entry) {
-	(*d.data)[k] = val
-}
-
 func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 	d.initMap()
 
 	if node.Kind != yaml.MappingNode {
 		return fmt.Errorf("dict: not a mapping node: tag=%s val=%s at %d:%d", node.Tag, node.Value, node.Line, node.Column)
 	}
+
+	d.data.Lock()
+	defer d.data.Unlock()
 
 	idx := 0
 	for idx < len(node.Content) {
@@ -185,16 +208,16 @@ func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 		case yaml.SequenceNode:
 			sublist := EmptyList()
 			sublist.UnmarshalYAML(sub2)
-			d.append(name, sublist)
+			d.data.M[name] = sublist
 		case yaml.MappingNode:
 			subdict := EmptyDict()
 			subdict.UnmarshalYAML(sub2)
-			d.append(name, subdict)
+			d.data.M[name] = subdict
 		case yaml.ScalarNode:
 			if sub2.Tag == "!!null" {
-				d.append(name, nil)
+				d.data.M[name] = nil
 			} else {
-				d.append(name, NewScalarStr(sub2.Value))
+				d.data.M[name] = NewScalarStr(sub2.Value)
 			}
 		default:
 			return fmt.Errorf("dict: unhandled tag: tag=%s val=%s at %d:%d", sub2.Tag, sub2.Value, sub2.Line, sub2.Column)
@@ -208,10 +231,9 @@ func (d *Dict) UnmarshalYAML(node *yaml.Node) error {
 
 // Implements the yaml.Marshaler interface
 func (d Dict) MarshalYAML() (interface{}, error) {
-	return d.data, nil
+	return d.data.M, nil
 }
 
 func EmptyDict() Dict {
-	m := make(api.EntryMap)
-	return Dict{data: &m}
+	return Dict{data: &dictData{M: make(map[api.Key]api.Entry)}}
 }

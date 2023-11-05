@@ -1,5 +1,9 @@
 package api
 
+import (
+	"sync"
+)
+
 type EntryList = []Entry
 type KeyList = []Key
 type EntryMap = map[Key]Entry
@@ -26,3 +30,12 @@ const (
 	// magic key for disabling variable/macro substitution
 	MagicAttrLiteral = Key("@@LITERAL")
 )
+
+type EntMap = struct {
+	sync.RWMutex
+	M map[Key]Entry
+}
+
+func NewEntMap() *EntMap {
+	return &EntMap{M: make(map[Key]Entry)}
+}
