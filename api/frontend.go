@@ -55,7 +55,7 @@ func GetStrMap(r Entry, k Key) map[string]string {
 	m := make(map[string]string)
 	if ent := GetEntry(r, k); ent != nil {
 		for _, idx := range ent.Keys() {
-			if sub, _ := ent.Get(idx); ent != nil {
+			if sub, _ := ent.Get(idx); sub != nil {
 				m[string(idx)] = sub.String()
 			}
 		}
