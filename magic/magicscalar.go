@@ -17,11 +17,11 @@ func (this magicScalar) Get(k api.Key) (api.Entry, error) {
 	case api.MagicAttrPath:
 		return core.NewScalarStr(string(this.Path)), nil
 
-	case api.MagicAttrKey:
+	case api.MagicAttrKey, api.MagicAttrShortKey:
 		_, p1 := this.Path.Tail()
 		return core.NewScalarStr(string(p1)), nil
 
-	case api.MagicAttrParent:
+	case api.MagicAttrParent, api.MagicAttrShortParent:
 		p1, _ := this.Path.Tail()
 		if this.Root == nil {
 			return nil, nil
