@@ -121,22 +121,75 @@ func (this MagicDict) getSpecial(k api.Key, defkey api.Key) (api.Entry, error) {
 	return nil, nil
 }
 
+func (this MagicDict) getdef(walkKey api.Key, defdict api.Entry) (api.Entry, error) {
+	head, tail := walkKey.Tail()
+	ent, err := defdict.Get(head)
+
+	// FIXME: check tail.Empty()
+	if err != nil {
+		log.Println("default get ", head, "failed")
+		return ent, nil
+	}
+	if ent == nil {
+		log.Println("default get ", head, "NIL")
+		return ent, nil
+	}
+	if ent.IsScalar() {
+		log.Println("default path is scalar: ", ent.String())
+
+		if refname, ok := parser.ParseSimpleRefExpr(ent.String()); ok {
+			log.Println("now should try to fetch ref", refname, "and", tail)
+			referredEntry, referredErr := this.Root.Get(api.Key(refname))
+			if referredErr != nil {
+				log.Println("referredErr", referredErr)
+				return referredEntry, referredErr
+			}
+			if referredEntry == nil {
+				log.Println("referredEntry is NIL")
+				return referredEntry, referredErr
+			}
+			// FIXME: relative keys probably wont work yet
+			ent = referredEntry
+		}
+	}
+
+	if tail.Empty() {
+		log.Println("reached final")
+		return ent, err
+	} else {
+		log.Println("got tail", tail)
+		return ent.Get(tail)
+	}
+}
+
+func (this MagicDict) GetDefault(k api.Key) (api.Entry, error) {
+	defkey := this.Path.Append(k)
+//	ent, err = this.Defaults.Get(defkey)
+	return this.getdef(defkey, this.Defaults)
+}
+
 func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 
+	log.Printf("MagicDict::Get() path=%s key=%s\n", this.Path, k)
+
 	if k.Empty() {
+		log.Println("final")
 		return this, nil
 	}
 
 	head, tail := k.Head()
 
 	if !tail.Empty() {
+		log.Println("tail not empty", tail, "looking for head", head)
 		parent, err := this.Get(head)
 		if err != nil {
 			return nil, err
 		}
 		if parent == nil {
+			log.Println("parent nil, bailing out")
 			return nil, nil
 		}
+		log.Println("asking parent for ", tail)
 		return parent.Get(tail)
 	}
 
@@ -179,12 +232,15 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 
 	log.Println("MagicDict: trying default: ", this.Path.Append(k))
 
-	defkey := this.Path.Append(k)
-	ent, err = this.Defaults.Get(defkey)
+//	defkey := this.Path.Append(k)
+//	ent, err = this.Defaults.Get(defkey)
+	ent, err = this.GetDefault(k)
 	if err != nil {
 		log.Println("defaults get error", err)
-		return this.getSpecial(k, defkey)
+//		return this.getSpecial(k, defkey)
+		return ent, err
 	}
+
 	if ent != nil {
 		return this.box(k, ent)
 	}
