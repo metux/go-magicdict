@@ -5,6 +5,8 @@ package parser
 
 import (
 	"fmt"
+	"strings"
+	"log"
 
 	"github.com/metux/go-magicdict/utils"
 )
@@ -123,4 +125,16 @@ func ParseExpression(text string, strict bool) (Expression, error) {
 		s = tail
 	}
 	return elems, nil
+}
+
+// FIXME: doesn't support recursive references, nor mult-element refs
+// FIXME: should use the real parser and check for exactly one ref term
+func ParseSimpleRefExpr(text string) (string, bool) {
+	if strings.HasPrefix(text, tokenRefStart) && strings.HasSuffix(text, tokenRefEnd) {
+		log.Println("expr text: ", text)
+		parsed := text[len(tokenRefStart):len(text)-len(tokenRefEnd)]
+		log.Println("parsed: ", parsed)
+		return parsed, true
+	}
+	return text, false
 }

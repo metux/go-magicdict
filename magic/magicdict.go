@@ -4,6 +4,7 @@ import (
 	"github.com/metux/go-magicdict/api"
 	"github.com/metux/go-magicdict/core"
 	"github.com/metux/go-magicdict/macro"
+	"github.com/metux/go-magicdict/parser"
 	"github.com/metux/go-magicdict/utils"
 )
 
@@ -70,8 +71,43 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 	return macro.ProcessVars(v, r)
 }
 
-func (this MagicDict) Get(k api.Key) (api.Entry, error) {
+func (this MagicDict) getdef(walkKey api.Key, defdict api.Entry) (api.Entry, error) {
+	head, tail := walkKey.Head()
+	ent, err := defdict.Get(head)
 
+	// FIXME: check tail.Empty()
+	if err != nil {
+		return ent, nil
+	}
+	if ent == nil {
+		return ent, nil
+	}
+	if ent.IsScalar() {
+		if refname, ok := parser.ParseSimpleRefExpr(ent.String()); ok {
+			referredEntry, referredErr := this.Root.Get(api.Key(refname))
+			if referredErr != nil {
+				return referredEntry, referredErr
+			}
+			if referredEntry == nil {
+				return referredEntry, referredErr
+			}
+			// FIXME: relative keys probably wont work yet
+			ent = referredEntry
+		}
+	}
+
+	if tail.Empty() {
+		return ent, err
+	} else {
+		return this.getdef(tail, ent)
+	}
+}
+
+func (this MagicDict) GetDefault(k api.Key) (api.Entry, error) {
+	return this.getdef(this.Path.Append(k), this.Defaults)
+}
+
+func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 	if k.Empty() {
 		return this, nil
 	}
@@ -125,7 +161,7 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 		return this.box(k, ent)
 	}
 
-	ent, err = this.Defaults.Get(this.Path.Append(k))
+	ent, err = this.GetDefault(k)
 	if err != nil {
 		return nil, err
 	}

@@ -11,7 +11,7 @@ func RunTestOne(t *testing.T, r api.Entry) {
 
 	c := Checker{Test: t, Root: r}
 
-	c.AssertKeys("", []string{"schinken", "escapetest", "xxx", "foo", "bar", "yyy", "hello", "ref", "butter", "zzz", "x123"})
+	c.AssertKeys("", []string{"target1", "tmpl1", "schinken", "escapetest", "xxx", "foo", "bar", "yyy", "hello", "ref", "butter", "zzz", "x123"})
 	c.AssertKeys("bar", []string{"x", "y", "tree"})
 	c.AssertKeys("bar::tree", []string{"leaf", "leaf2", "list", "knollo", "knollo2", "myname"})
 
@@ -105,6 +105,11 @@ func RunTestOne(t *testing.T, r api.Entry) {
 
 	api.SetStr(newdict, api.Key("wurst"), "salami")
 	c.AssertString("foox::bar::xxx::wurst", "salami")
+
+	// check defaults w/ refs
+	c.AssertString("target1::name", "one")
+	c.AssertString("target1::foo", "bar")
+	c.AssertString("target1::install/dir", "/usr/bin")
 
 	RunTestLiteral(c)
 	RunTestListCreateAppend(c)
