@@ -122,8 +122,10 @@ func (this MagicDict) getSpecial(k api.Key, defkey api.Key) (api.Entry, error) {
 }
 
 func (this MagicDict) getdef(walkKey api.Key, defdict api.Entry) (api.Entry, error) {
-	head, tail := walkKey.Tail()
+	head, tail := walkKey.Head()
 	ent, err := defdict.Get(head)
+
+	log.Printf("getdef: walkkey=\"%s\" head=\"%s\" tail=\"%s\"\n", walkKey, head, tail)
 
 	// FIXME: check tail.Empty()
 	if err != nil {
@@ -158,7 +160,7 @@ func (this MagicDict) getdef(walkKey api.Key, defdict api.Entry) (api.Entry, err
 		return ent, err
 	} else {
 		log.Println("got tail", tail)
-		return ent.Get(tail)
+		return this.getdef(tail, ent)
 	}
 }
 
