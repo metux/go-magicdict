@@ -34,3 +34,7 @@ x123:
         three: parent-is-${@@PARENT::@@KEY}
 
 schinken: ${brot::wurst}
+
+target1:
+    name: one
+    foo: bar

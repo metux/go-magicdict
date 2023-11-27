@@ -15,3 +15,10 @@ bar:
 yyy: huhu
 
 escapetest: foo-\${foo}
+
+tmpl1:
+    c/executable:
+        install/dir: /usr/bin
+        install/mode: 0766
+
+target1: ${tmpl1::c/executable}

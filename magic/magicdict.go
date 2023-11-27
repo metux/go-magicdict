@@ -1,9 +1,13 @@
 package magic
 
 import (
+	"log"
+	"fmt"
+
 	"github.com/metux/go-magicdict/api"
 	"github.com/metux/go-magicdict/core"
 	"github.com/metux/go-magicdict/macro"
+	"github.com/metux/go-magicdict/parser"
 	"github.com/metux/go-magicdict/utils"
 )
 
@@ -70,6 +74,53 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 	return macro.ProcessVars(v, r)
 }
 
+func (this MagicDict) getSpecial(k api.Key, defkey api.Key) (api.Entry, error) {
+	log.Println("=========> special loop begin: ", defkey)
+	whead, wtail := defkey.Head()
+	h := api.Key("")
+	for !wtail.Empty() {
+		log.Printf("whead \"%s\" wtail \"%s\"\n", whead, wtail)
+		ent1, err1 := this.Defaults.Get(whead)
+		if ent1 == nil {
+			log.Println("xx1: ent==nil", err1)
+		} else if ent1.IsScalar() {
+			if refname, ok := parser.ParseSimpleRefExpr(ent1.String()); ok {
+				log.Println("now should try to fetch ref", refname, "and", wtail)
+				referredEntry, referredErr := this.Root.Get(api.Key(refname))
+				if referredErr != nil {
+					log.Println("referredErr", referredErr)
+				}
+				if referredEntry == nil {
+					log.Println("referredEntry is NIL")
+				} else {
+					log.Println("referredEntr is OK, calling for", wtail)
+					subEnt, subErr := referredEntry.Get(wtail)
+					if subErr != nil {
+						log.Println("subErr", subErr)
+					}
+					if subEnt == nil {
+						log.Println("subEnt is NIL")
+					} else {
+						log.Println("subEnt is OK", subEnt.String())
+					}
+					log.Println("=========> leaving special loop")
+					return subEnt, subErr
+				}
+			} else {
+				log.Println("failed parsing refname")
+				return nil, fmt.Errorf("failed parsing refname \"%s\" at key %s tail %s", ent1.String(), whead, wtail)
+			}
+		} else {
+			log.Println("not scalar")
+		}
+		h, wtail = wtail.Head()
+		whead = whead.Append(h)
+	}
+	log.Println("=========> special loop end")
+
+	return nil, nil
+}
+
 func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 
 	if k.Empty() {
@@ -119,15 +170,20 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 
 	ent, err := this.Data.Get(k)
 	if err != nil {
+		log.Println("MagicDict: Get() error: ", err, "on key ", k)
 		return nil, err
 	}
 	if ent != nil {
 		return this.box(k, ent)
 	}
 
-	ent, err = this.Defaults.Get(this.Path.Append(k))
+	log.Println("MagicDict: trying default: ", this.Path.Append(k))
+
+	defkey := this.Path.Append(k)
+	ent, err = this.Defaults.Get(defkey)
 	if err != nil {
-		return nil, err
+		log.Println("defaults get error", err)
+		return this.getSpecial(k, defkey)
 	}
 	if ent != nil {
 		return this.box(k, ent)
