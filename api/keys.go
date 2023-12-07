@@ -144,3 +144,11 @@ func (k Key) IsDictOp() (bool, Key) {
 	}
 	return false, k
 }
+
+func (k Key) HeadListOp() (Key, Key, bool) {
+	head, tail := k.Head()
+	if ok, lk := head.IsListOp(); ok {
+		return lk, tail, true
+	}
+	return head, tail, false
+}
