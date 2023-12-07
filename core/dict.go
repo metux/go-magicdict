@@ -112,12 +112,7 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 
 	d.initMap()
 
-	head, tail := k.Head()
-	nlist := false
-	if ok, lk := head.IsListOp(); ok {
-		nlist = ok
-		head = lk
-	}
+	head, tail, nlist := k.HeadListOp()
 
 	d.data.Lock()
 
