@@ -195,11 +195,7 @@ func (this MagicDict) Put(k api.Key, v api.Entry) error {
 		nlist, head := head.IsListOp()
 		cur, _ := this.Get(head)
 		if cur == nil {
-			if nlist {
-				cur = core.EmptyList()
-			} else {
-				cur = core.EmptyDict()
-			}
+			cur = core.EmptyListOrDict(nlist)
 			if err := this.Data.Put(head, cur); err != nil {
 				return err
 			}
