@@ -144,3 +144,24 @@ func DefaultIntDef(r Entry, k Key, dflt int) int {
 func DefaultPutInt(r Entry, k Key, v int) error {
 	return EntryPutInt(r, k.MagicDefaults(), v)
 }
+
+func IsScalar(e Entry) bool {
+	if e == nil {
+		return false
+	}
+	return e.IsScalar()
+}
+
+func IsList(e Entry) bool {
+	if e == nil {
+		return false
+	}
+	return e.IsList()
+}
+
+func IsDict(e Entry) bool {
+	if e == nil {
+		return false
+	}
+	return e.IsDict()
+}

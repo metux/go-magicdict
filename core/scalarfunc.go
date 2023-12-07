@@ -49,6 +49,14 @@ func (sc ScalarFunc) IsScalar() bool {
 	return true
 }
 
+func (sc ScalarFunc) IsList() bool {
+	return false
+}
+
+func (sc ScalarFunc) IsDict() bool {
+	return false
+}
+
 func NewScalarFunc(f func() string) api.Entry {
 	return ScalarFunc{data: f}
 }

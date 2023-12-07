@@ -115,6 +115,24 @@ func (this Symlink) IsScalar() bool {
 	}
 }
 
+func (this Symlink) IsList() bool {
+	if orig, err := this.fetch(); err == nil {
+		return orig.IsList()
+	} else {
+		log.Printf("Symlink fetch error: %v", err)
+		return true
+	}
+}
+
+func (this Symlink) IsDict() bool {
+	if orig, err := this.fetch(); err == nil {
+		return orig.IsDict()
+	} else {
+		log.Printf("Symlink fetch error: %v", err)
+		return true
+	}
+}
+
 // Implementing yml.Marshaler interface
 // Returning the entry that the link is pointing to, thus will be mashaled
 // like as the referenced entry would be directly here.

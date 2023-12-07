@@ -174,6 +174,14 @@ func (d Dict) IsScalar() bool {
 	return false
 }
 
+func (d Dict) IsList() bool {
+	return false
+}
+
+func (d Dict) IsDict() bool {
+	return true
+}
+
 // Dict objects aren't constant
 func (d Dict) IsConst() bool {
 	return false

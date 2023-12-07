@@ -140,6 +140,14 @@ func (this MagicDict) IsScalar() bool {
 	return this.Data.IsScalar()
 }
 
+func (this MagicDict) IsList() bool {
+	return this.Data.IsList()
+}
+
+func (this MagicDict) IsDict() bool {
+	return this.Data.IsDict()
+}
+
 func (this MagicDict) IsConst() bool {
 	return this.Data.IsConst()
 }

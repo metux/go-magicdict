@@ -49,6 +49,14 @@ func (sc Scalar) IsScalar() bool {
 	return true
 }
 
+func (sc Scalar) IsList() bool {
+	return false
+}
+
+func (sc Scalar) IsDict() bool {
+	return false
+}
+
 // Implements the yaml.Marshaler interface
 func (sc Scalar) MarshalYAML() (interface{}, error) {
 	return sc.Data, nil

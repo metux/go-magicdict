@@ -27,4 +27,6 @@ type Entry interface {
 
 	// Typechecks
 	IsScalar() bool
+	IsList() bool
+	IsDict() bool
 }
