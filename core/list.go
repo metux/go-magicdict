@@ -39,6 +39,10 @@ func (l List) Keys() api.KeyList {
 }
 
 func (l List) Get(k api.Key) (api.Entry, error) {
+	return l.getit(k)
+}
+
+func (l List) getit(k api.Key) (api.Entry, error) {
 	if k.Empty() {
 		return l, nil
 	}
@@ -51,6 +55,20 @@ func (l List) Get(k api.Key) (api.Entry, error) {
 }
 
 func (l List) Put(k api.Key, v api.Entry) error {
+	head, tail, nlist := k.HeadListOp()
+
+	if !tail.Empty() {
+		cur, err := l.getit(head)
+		if err != nil {
+			return err
+		}
+		if cur == nil {
+			cur = EmptyListOrDict(nlist)
+			l.Put(head, cur)
+		}
+		return cur.Put(tail, v)
+	}
+
 	// append
 	if k.IsAppend() {
 		l.append(v)
