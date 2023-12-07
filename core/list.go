@@ -82,15 +82,15 @@ func (l List) Put(k api.Key, v api.Entry) error {
 	if i < len(*l.data) {
 		(*l.data)[i] = v
 	} else {
-		newdata := make(api.EntryList, len(*l.data), i)
+		newdata := make(api.EntryList, i+1)
 		for idx, v := range *l.data {
 			newdata[idx] = v
 		}
 		newdata[i] = v
-		l.data = &newdata
+		*l.data = newdata
 	}
 
-	return api.ErrSubNotSupported
+	return nil
 }
 
 func (l List) Empty() bool {
