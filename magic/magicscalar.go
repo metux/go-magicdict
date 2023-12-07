@@ -40,6 +40,14 @@ func (this magicScalar) IsScalar() bool {
 	return true
 }
 
+func (this magicScalar) IsList() bool {
+	return false
+}
+
+func (this magicScalar) IsDict() bool {
+	return false
+}
+
 func (this magicScalar) IsConst() bool {
 	return true
 }

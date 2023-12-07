@@ -109,6 +109,14 @@ func (l List) IsScalar() bool {
 	return false
 }
 
+func (l List) IsList() bool {
+	return true
+}
+
+func (l List) IsDict() bool {
+	return false
+}
+
 func (l List) IsConst() bool {
 	return false
 }
