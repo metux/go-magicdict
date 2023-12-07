@@ -119,17 +119,10 @@ func (d Dict) Put(k api.Key, v api.Entry) error {
 	if !tail.Empty() {
 		cur := d.data.M[head]
 		if cur == nil {
-			if nlist {
-				e := EmptyList()
-				d.data.M[head] = e
-				d.data.Unlock()
-				return e.Put(tail, v)
-			} else {
-				e := EmptyDict()
-				d.data.M[head] = e
-				d.data.Unlock()
-				return e.Put(tail, v)
-			}
+			e := EmptyListOrDict(nlist)
+			d.data.M[head] = e
+			d.data.Unlock()
+			return e.Put(tail, v)
 		}
 		d.data.Unlock()
 		return cur.Put(tail, v)
