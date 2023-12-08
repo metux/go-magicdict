@@ -129,6 +129,10 @@ func DefaultPutStr(r Entry, k Key, v string) error {
 	return EntryPutStr(r, k.MagicDefaults(), v)
 }
 
+func DefaultPutStrList(r Entry, k Key, v []string) error {
+	return EntryPutStrList(r, k.MagicDefaults(), v)
+}
+
 func DefaultBoolDef(r Entry, k Key, dflt bool) bool {
 	return EntryBoolDef(r, k.MagicDefaults(), dflt)
 }
