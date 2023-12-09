@@ -12,16 +12,18 @@ type magicScalar struct {
 }
 
 func (this magicScalar) Get(k api.Key) (api.Entry, error) {
+	k = xlateKey(k)
+
 	head, tail := k.Head()
 	switch head {
 	case api.MagicAttrPath:
 		return core.NewScalarStr(string(this.Path)), nil
 
-	case api.MagicAttrKey, api.MagicAttrShortKey:
+	case api.MagicAttrKey:
 		_, p1 := this.Path.Tail()
 		return core.NewScalarStr(string(p1)), nil
 
-	case api.MagicAttrParent, api.MagicAttrShortParent:
+	case api.MagicAttrParent:
 		p1, _ := this.Path.Tail()
 		if this.Root == nil {
 			return nil, nil

@@ -76,6 +76,8 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 		return this, nil
 	}
 
+	k = xlateKey(k)
+
 	head, tail := k.Head()
 
 	if !tail.Empty() {
@@ -102,11 +104,11 @@ func (this MagicDict) Get(k api.Key) (api.Entry, error) {
 	case api.MagicAttrPath:
 		return core.NewScalarStr(string(this.Path)), nil
 
-	case api.MagicAttrKey, api.MagicAttrShortKey:
+	case api.MagicAttrKey:
 		_, p1 := this.Path.Tail()
 		return core.NewScalarStr(string(p1)), nil
 
-	case api.MagicAttrParent, api.MagicAttrShortParent:
+	case api.MagicAttrParent:
 		p1, _ := this.Path.Tail()
 		if this.Root == nil {
 			return nil, nil
