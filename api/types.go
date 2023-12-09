@@ -18,9 +18,15 @@ const (
 	// name of the node's key within its parent (string)
 	MagicAttrKey      = Key("@@KEY")
 	MagicAttrShortKey = Key("@@/")
+
 	// reference to the node's parent entry itself (entry)
-	MagicAttrParent      = Key("@@PARENT")
-	MagicAttrShortParent = Key("@@^")
+	MagicAttrParent       = Key("@@PARENT")
+	MagicAttrShortParent  = Key("@@^")
+	MagicAttrShortParent2 = Key("@@^2")
+	MagicAttrShortParent3 = Key("@@^3")
+	MagicAttrShortParent4 = Key("@@^4")
+	MagicAttrShortParent5 = Key("@@^5")
+
 	// reference to the parent's id
 	MagicAttrParentKey = Key("@@PARENT::@@KEY")
 	// name of the node's full path inside MagicDict object (string)
