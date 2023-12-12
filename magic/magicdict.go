@@ -1,6 +1,8 @@
 package magic
 
 import (
+	"log"
+
 	"github.com/metux/go-magicdict/api"
 	"github.com/metux/go-magicdict/core"
 	"github.com/metux/go-magicdict/macro"
@@ -71,6 +73,8 @@ func (this MagicDict) box(k api.Key, v api.Entry) (api.Entry, error) {
 }
 
 func (this MagicDict) Get(k api.Key) (api.Entry, error) {
+
+	log.Println("MagicDict: Get() k=", k, "p=", this.Path)
 
 	if k.Empty() {
 		return this, nil
